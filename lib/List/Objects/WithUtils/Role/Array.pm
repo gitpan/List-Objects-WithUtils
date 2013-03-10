@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '0.002001';
+  $List::Objects::WithUtils::Role::Array::VERSION = '0.002002';
 }
 use strictures 1;
 
@@ -11,6 +11,8 @@ use List::MoreUtils ();
 use List::UtilsBy ();
 
 use Scalar::Util 'blessed';
+
+use namespace::clean;
 
 sub new {
   bless [ @_[1 .. $#_] ], $_[0] 
@@ -72,7 +74,6 @@ sub reverse {
 }
 
 sub sliced {
-  my ($self, @pos) = @_;
   blessed($_[0])->new(
     @{$_[0]}[ @_[1 .. $#_] ]
   )
@@ -187,6 +188,10 @@ List::Objects::WithUtils::Role::Array - Array manipulation methods
   $array->push(qw/ d e f /);
 
   my @upper = $array->map(sub { uc $_[0] })->all;
+
+  if ( $array->has_any(sub { $_ eq 'a' }) ) {
+    ...
+  }
 
   ## ...etc...
 

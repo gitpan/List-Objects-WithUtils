@@ -18,10 +18,10 @@ my @modules = qw(
   List::UtilsBy
   Module::Runtime
   Role::Tiny
-  Role::Tiny::With
   Scalar::Util
   Syntax::Keyword::Junction
   Test::More
+  namespace::clean
   perl
   strictures
 );

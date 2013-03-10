@@ -21,11 +21,11 @@ requires:
   List::UtilsBy: 0.09
   Module::Runtime: 0.013
   Role::Tiny: 1
-  Role::Tiny::With: 0
   Scalar::Util: 0
   Syntax::Keyword::Junction: 0
+  namespace::clean: 0
   perl: v5.8.9
   strictures: 1
 resources:
   repository: git://github.com/avenj/list-objects-withutils.git
-version: 0.002001
+version: 0.002002

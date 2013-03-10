@@ -12,14 +12,8 @@ SYNOPSIS
           sub { uc $_[0] }
       )->uniq->all;  # @upper = ( 'BB', 'BC' )
 
-      my $hash  = hash( foo => $bar, snacks => $cake );
+      my $hash  = hash( foo => 'bar', snacks => 'cake' );
       my @matching = $hash->keys->grep(sub { $_[0] =~ /foo/ })->all;
-
-    See:
-
-    List::Objects::WithUtils::Role::Array
-
-    List::Objects::WithUtils::Role::Hash
 
 DESCRIPTION
     A small set of roles and classes defining an object-oriented interface
@@ -27,6 +21,14 @@ DESCRIPTION
 
     Some commonly used functions from List::Util, List::MoreUtils, and
     List::UtilsBy are conveniently provided as methods.
+
+    See:
+
+    List::Objects::WithUtils::Role::Array
+
+    List::Objects::WithUtils::Role::WithJunctions
+
+    List::Objects::WithUtils::Role::Hash
 
     array is imported from List::Objects::WithUtils::Array and creates a new
     ARRAY-type object. Behavior is defined by

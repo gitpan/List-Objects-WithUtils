@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Array;
 {
-  $List::Objects::WithUtils::Array::VERSION = '0.002001';
+  $List::Objects::WithUtils::Array::VERSION = '0.002002';
 }
 use strictures 1;
 
@@ -26,17 +26,12 @@ List::Objects::WithUtils::Array - An array container class
 
   my $array = array(qw/ a b c /);
 
+=head1 DESCRIPTION
+
 See L<List::Objects::WithUtils::Role::Array> for a description of available
 methods.
 
 This class also consumes L<List::Objects::WithUtils::Role::WithJunctions>.
-
-=head1 DESCRIPTION
-
-This class is a concrete implementation of
-L<List::Objects::WithUtils::Role::Array>
-and L<List::Objects::WithUtils::Role::WithJunctions>. 
-Methods are documented there.
 
 =head2 array
 

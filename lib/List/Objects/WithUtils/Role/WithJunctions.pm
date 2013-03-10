@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::WithJunctions;
 {
-  $List::Objects::WithUtils::Role::WithJunctions::VERSION = '0.002001';
+  $List::Objects::WithUtils::Role::WithJunctions::VERSION = '0.002002';
 }
 use strictures 1;
 use Role::Tiny;
@@ -8,6 +8,8 @@ use Role::Tiny;
 use Syntax::Keyword::Junction
   any => { -as => 'junction_any' },
   all => { -as => 'junction_all' };
+
+use namespace::clean;
 
 sub any_items {
   junction_any( @{ $_[0] } )

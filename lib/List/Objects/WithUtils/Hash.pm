@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Hash;
 {
-  $List::Objects::WithUtils::Hash::VERSION = '0.002001';
+  $List::Objects::WithUtils::Hash::VERSION = '0.002002';
 }
 use strictures 1;
 
@@ -23,10 +23,7 @@ List::Objects::WithUtils::Hash - A hash container class
 
   use List::Objects::WithUtils 'hash';
 
-  my $hash = hash( foo => bar );
-
-See L<List::Objects::WithUtils::Role::Hash> for a description of available
-methods.
+  my $hash = hash( foo => 'bar' );
 
 =head1 DESCRIPTION
 
