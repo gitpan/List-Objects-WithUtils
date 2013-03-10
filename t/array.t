@@ -5,6 +5,14 @@ use List::Objects::WithUtils 'array';
 
 ## count()
 my $arr = array;
+
+ok( $arr->does( 'List::Objects::WithUtils::Role::Array' ),
+  'does Array role'
+);
+ok( $arr->does( 'List::Objects::WithUtils::Role::WithJunctions' ),
+  'does WithJunctions role'
+);
+
 cmp_ok( $arr->count, '==', 0, 'size 0 ok' );
 $arr = array(1);
 cmp_ok( $arr->count, '==', 1, 'size 1 ok' );
@@ -268,6 +276,14 @@ is_deeply( [ $hsorted->all ],
   ],
   'uniq_by ok'
 );
+
+## junctions
+$arr = array(1, 2, 3);
+ok( $arr->any_items == 2, 'any == 2 ok' );
+ok( $arr->any_items == 3, 'any == 3 ok' );
+ok( not($arr->all_items == 2), 'not all == 2 ok' );
+$arr = array(1, 1, 1);
+ok( $arr->all_items == 1, 'all == 1 ok' );
 
 done_testing;
 

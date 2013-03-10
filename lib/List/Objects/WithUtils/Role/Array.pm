@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '0.001001';
+  $List::Objects::WithUtils::Role::Array::VERSION = '0.002000';
 }
 use strictures 1;
 
@@ -435,6 +435,10 @@ given sub returns unique values.
 =head1 SEE ALSO
 
 L<List::Objects::WithUtils>
+
+L<List::Objects::WithUtils::Array>
+
+L<List::Objects::WithUtils::Role::WithJunctions>
 
 L<Data::Perl>
 
