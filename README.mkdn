@@ -1,0 +1,61 @@
+# NAME
+
+List::Objects::WithUtils - Object interfaces to lists with useful methods
+
+# SYNOPSIS
+
+    use List::Objects::WithUtils;
+
+    my $array = array(qw/ aa Ab bb Bc bc /);
+    my @upper = $array->grep(
+        sub { $_[0] =~ /^b/i }
+      )->map(
+        sub { uc $_[0] }
+    )->uniq->all;  # @upper = ( 'BB', 'BC' )
+
+    my $hash  = hash( foo => $bar, snacks => $cake );
+    my @matching = $hash->keys->grep(sub { $_[0] =~ /foo/ })->all;
+
+See:
+
+[List::Objects::WithUtils::Role::Array](http://search.cpan.org/perldoc?List::Objects::WithUtils::Role::Array)
+
+[List::Objects::WithUtils::Role::Hash](http://search.cpan.org/perldoc?List::Objects::WithUtils::Role::Hash)
+
+# DESCRIPTION
+
+A small set of roles and classes defining an object-oriented interface to Perl
+hashes and arrays. Derived from [Data::Perl](http://search.cpan.org/perldoc?Data::Perl).
+
+Some commonly used functions from [List::Util](http://search.cpan.org/perldoc?List::Util), [List::MoreUtils](http://search.cpan.org/perldoc?List::MoreUtils), and
+[List::UtilsBy](http://search.cpan.org/perldoc?List::UtilsBy) are conveniently provided as methods.
+
+__array__ is imported from [List::Objects::WithUtils::Array](http://search.cpan.org/perldoc?List::Objects::WithUtils::Array) and creates a new
+ARRAY-type object. 
+Behavior is defined by [List::Objects::WithUtils::Role::Array](http://search.cpan.org/perldoc?List::Objects::WithUtils::Role::Array); look
+there for documentation on available methods.
+
+__hash__ is imported from [List::Objects::WithUtils::Hash](http://search.cpan.org/perldoc?List::Objects::WithUtils::Hash); see  
+[List::Objects::WithUtils::Role::Hash](http://search.cpan.org/perldoc?List::Objects::WithUtils::Role::Hash) for documentation.
+
+__Why another object-oriented list module?__
+
+There are a fair few object-oriented approaches to lists on CPAN, none of
+which were quite what I needed. [Data::Perl](http://search.cpan.org/perldoc?Data::Perl) comes the closest -- but is
+primarily targetting [MooX::HandlesVia](http://search.cpan.org/perldoc?MooX::HandlesVia) and cannot guarantee a reasonably
+stable API (and I don't need the other data types).
+
+This module aims to provide a consistent, natural interface to hashes and
+arrays exclusively, with convenient access to common tools. The interface is
+expected to remain stable; methods may be added but are
+not expected to be removed (or experience incompatible interface changes, barring
+serious bugs).
+
+# AUTHOR
+
+Jon Portnoy <avenj@cobaltirc.org>
+
+Significant portions of this code are derived from [Data::Perl](http://search.cpan.org/perldoc?Data::Perl) 
+by Matthew Phillips (CPAN: MATTP), haarg, and others.
+
+Licensed under the same terms as Perl.
