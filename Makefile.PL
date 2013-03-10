@@ -31,9 +31,10 @@ my %WriteMakefileArgs = (
     "Role::Tiny" => 1,
     "Role::Tiny::With" => 0,
     "Scalar::Util" => 0,
+    "Syntax::Keyword::Junction" => 0,
     "strictures" => 1
   },
-  "VERSION" => "0.002000",
+  "VERSION" => "0.002001",
   "test" => {
     "TESTS" => "t/*.t"
   }

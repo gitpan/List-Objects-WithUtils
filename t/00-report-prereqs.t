@@ -20,6 +20,7 @@ my @modules = qw(
   Role::Tiny
   Role::Tiny::With
   Scalar::Util
+  Syntax::Keyword::Junction
   Test::More
   perl
   strictures
