@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '0.002002';
+  $List::Objects::WithUtils::Role::Array::VERSION = '0.002003';
 }
 use strictures 1;
 
@@ -181,6 +181,7 @@ List::Objects::WithUtils::Role::Array - Array manipulation methods
 
 =head1 SYNOPSIS
 
+  ## Via List::Objects::WithUtils::Array ->
   use List::Objects::WithUtils 'array';
 
   my $array = array(qw/ a b c /);
@@ -193,7 +194,10 @@ List::Objects::WithUtils::Role::Array - Array manipulation methods
     ...
   }
 
-  ## ...etc...
+  ## As a Role ->
+  use Role::Tiny::With;
+  with 'List::Objects::WithUtils::Role::Array',
+       'List::Objects::WithUtils::Role::WithJunctions' ;
 
 =head1 DESCRIPTION
 
@@ -306,8 +310,13 @@ The existing array is modified in-place.
   $iter->();  ##  [ 4, 5, 6 ]
   $iter->();  ##  [ 7 ]
 
+  array( 1 .. 7 )->natatime(3, sub { ... });
+
 Returns an iterator that, when called, produces an ARRAY containing the next
 'n' items.
+
+If given a coderef as a second argument, it will be called against each
+bundled group.
 
 =head3 reverse
 

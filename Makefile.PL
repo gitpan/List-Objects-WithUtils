@@ -30,11 +30,11 @@ my %WriteMakefileArgs = (
     "Module::Runtime" => "0.013",
     "Role::Tiny" => 1,
     "Scalar::Util" => 0,
-    "Syntax::Keyword::Junction" => 0,
+    "Syntax::Keyword::Junction" => "0.003",
     "namespace::clean" => 0,
     "strictures" => 1
   },
-  "VERSION" => "0.002002",
+  "VERSION" => "0.002003",
   "test" => {
     "TESTS" => "t/*.t"
   }
