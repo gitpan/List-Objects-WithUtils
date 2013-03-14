@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '0.002003';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '0.002004';
 }
 use strictures 1;
 
@@ -199,7 +199,7 @@ Returns the list of values in the hash as an L</array_type> object.
 
 =head2 kv
 
-  for (my $pair = $hash->kv->all) {
+  for my $pair ($hash->kv->all) {
     my ($key, $val) = @$pair;
   }
 
