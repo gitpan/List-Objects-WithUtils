@@ -1,13 +1,15 @@
 package List::Objects::WithUtils::Role::WithJunctions;
 {
-  $List::Objects::WithUtils::Role::WithJunctions::VERSION = '0.002004';
+  $List::Objects::WithUtils::Role::WithJunctions::VERSION = '0.003000';
 }
 use strictures 1;
 use Role::Tiny;
 
 use Syntax::Keyword::Junction
-  any => { -as => 'junction_any' },
-  all => { -as => 'junction_all' };
+  any  => { -as => 'junction_any' },
+  all  => { -as => 'junction_all' },
+  none => { -as => 'junction_none' },
+  ;
 
 use namespace::clean;
 
@@ -59,7 +61,7 @@ current array.
 
 =head2 all_items
 
-Returns the overloaded L<Syntax::Keyword::Junction/"all"> object for the
+Returns the L<Syntax::Keyword::Junction/"all"> object for the
 current array.
 
 =head1 AUTHOR
