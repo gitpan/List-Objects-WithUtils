@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '0.003000';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '1.000000';
 }
 use strictures 1;
 
@@ -133,6 +133,12 @@ objects.
 
 Constructs a new HASH-type object.
 
+=head2 export
+
+  my %hash = $hash->export;
+
+Returns a raw key/value list.
+
 =head2 array_type
 
 The class name of list/array-type objects that will be constructed from the
@@ -173,7 +179,7 @@ Returns boolean true if the key exists.
 
 Retrieves a key or list of keys from the hash.
 
-If we're taking a slice (multiple keys were specified), results are returned
+If we're taking a slice (multiple keys were specified), values are returned
 as an L</array_type> object. (See L</sliced> if you'd rather generate a new
 hash.)
 
@@ -183,24 +189,7 @@ hash.)
 
 Returns a new hash object built from the specified set of keys.
 
-=head2 set
-
-  $hash->set(
-    key1 => $val,
-    key2 => $other,
-  )
-
-Sets keys in the hash.
-
-Returns an L</array_type> object containing the new values.
-
-=head2 delete
-
-  $hash->delete( @keys );
-
-Deletes keys from the hash.
-
-Returns an L</array_type> object containing the deleted values.
+(See L</get> if you only need the values.)
 
 =head2 keys
 
@@ -223,11 +212,24 @@ Returns the list of values in the hash as an L</array_type> object.
 Returns an L</array_type> object containing the key/value pairs in the HASH,
 each of which is a two-element ARRAY.
 
-=head2 export
+=head2 set
 
-  my %hash = $hash->export;
+  $hash->set(
+    key1 => $val,
+    key2 => $other,
+  )
 
-Returns a raw key/value list.
+Sets keys in the hash.
+
+Returns an L</array_type> object containing the new values.
+
+=head2 delete
+
+  $hash->delete( @keys );
+
+Deletes keys from the hash.
+
+Returns an L</array_type> object containing the deleted values.
 
 =head1 SEE ALSO
 

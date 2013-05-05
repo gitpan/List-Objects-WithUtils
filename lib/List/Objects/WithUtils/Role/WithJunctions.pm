@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::WithJunctions;
 {
-  $List::Objects::WithUtils::Role::WithJunctions::VERSION = '0.003000';
+  $List::Objects::WithUtils::Role::WithJunctions::VERSION = '1.000000';
 }
 use strictures 1;
 use Role::Tiny;
@@ -9,7 +9,7 @@ use Syntax::Keyword::Junction
   any  => { -as => 'junction_any' },
   all  => { -as => 'junction_all' },
   none => { -as => 'junction_none' },
-  ;
+;
 
 use namespace::clean;
 
@@ -27,7 +27,7 @@ sub all_items {
 
 =head1 NAME
 
-List::Objects::WithUtils::Role::WithJunctions - Arrays with junctions
+List::Objects::WithUtils::Role::WithJunctions - Add junctions to Arrays
 
 =head1 SYNOPSIS
 

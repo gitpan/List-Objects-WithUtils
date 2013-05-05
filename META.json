@@ -4,7 +4,7 @@
       "Jon Portnoy <avenj@cobaltirc.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300030, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -36,7 +36,7 @@
             "Module::Runtime" : "0.013",
             "Role::Tiny" : "1",
             "Scalar::Util" : "0",
-            "Syntax::Keyword::Junction" : "0.003",
+            "Syntax::Keyword::Junction" : "0.003003",
             "namespace::clean" : "0",
             "perl" : "v5.8.9",
             "strictures" : "1"
@@ -56,6 +56,6 @@
          "web" : "git://github.com/avenj/list-objects-withutils"
       }
    },
-   "version" : "0.003000"
+   "version" : "1.000000"
 }
 

@@ -7,6 +7,7 @@ Makefile.PL
 README
 README.mkdn
 dist.ini
+examples/blog-post-list-objects.mkdn
 lib/List/Objects/WithUtils.pm
 lib/List/Objects/WithUtils/Array.pm
 lib/List/Objects/WithUtils/Hash.pm

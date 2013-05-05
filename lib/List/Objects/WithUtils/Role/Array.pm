@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '0.003000';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.000000';
 }
 use strictures 1;
 
@@ -23,9 +23,7 @@ sub copy {
 }
 
 sub count { CORE::scalar @{ $_[0] } }
-{ no warnings 'once';
-  *scalar = *count;
-}
+{ no warnings 'once'; *scalar = *count; }
 
 sub is_empty { CORE::scalar @{ $_[0] } ? 0 : 1 }
 
@@ -108,11 +106,9 @@ sub reduce {
 sub natatime {
   my $itr = List::MoreUtils::natatime($_[1], @{ $_[0] } );
   if ($_[2]) {
-    while (my @nxt = $itr->()) {
-      $_[2]->(@nxt)
-    }
+    while (my @nxt = $itr->()) { $_[2]->(@nxt) }
   } else { 
-    $itr 
+    return $itr
   }
 }
 
@@ -227,7 +223,7 @@ Returns the number of elements in the array.
 
 =head3 scalar
 
-The same as calling L</count>.
+Same as calling L</count>; returns the number of elements in the array.
 
 =head3 is_empty
 
