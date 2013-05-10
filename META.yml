@@ -28,4 +28,4 @@ requires:
   strictures: 1
 resources:
   repository: git://github.com/avenj/list-objects-withutils.git
-version: 1.000000
+version: 1.000001
