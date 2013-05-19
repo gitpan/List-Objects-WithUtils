@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '1.000001';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '1.000002';
 }
 use strictures 1;
 
@@ -84,7 +84,7 @@ sub kv {
 
 sub export {
   my ($self) = @_;
-  CORE::map {; $_, $self->{$_} } CORE::keys %$self
+  %$self
 }
 
 
