@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.000002';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.000003';
 }
 use strictures 1;
 
@@ -99,8 +99,20 @@ sub firstidx {
   &List::MoreUtils::firstidx( $_[1], @{ $_[0] } )
 }
 
-sub reduce {
-  List::Util::reduce { $_[1]->($a, $b) } @{ $_[0] }
+sub mesh {
+  blessed($_[0])->new(
+    &List::MoreUtils::mesh( @_ )
+  )
+# In case upstream ever changes, here's a pure-perl impl:
+#  my $max = -1;
+#  for my $item (@_) {
+#    $max = $#$item if $max < $#$item
+#  }
+#  blessed($_[0])->new(
+#    map {;
+#      my $idx = $_; map $_->[$idx], @_
+#    } 0 .. $max
+#  )
 }
 
 sub natatime {
@@ -110,6 +122,10 @@ sub natatime {
   } else { 
     return $itr
   }
+}
+
+sub reduce {
+  List::Util::reduce { $_[1]->($a, $b) } @{ $_[0] }
 }
 
 sub items_after {
@@ -165,6 +181,7 @@ sub uniq_by {
     &List::UtilsBy::uniq_by( $_[1], @{ $_[0] } )
   )
 }
+
 
 
 1;
@@ -283,24 +300,16 @@ Joins the array's elements and returns the joined string.
 
 Defaults to ',' if no delimiter is specified.
 
-=head3 sliced
+=head3 mesh
 
-  my $slice = $array->sliced(1, 3, 5);
+  my $meshed = array(qw/ a b c /)->mesh(
+    array( 1, 2, 3 )
+  );
+  #  [ 'a', 1, 'b', 2, 'c', 3 ]
 
-Returns a new array object consisting of the elements retrived 
-from the specified indexes.
-
-=head3 splice
-
-  ## 2-arg splice (remove elements):
-  my $spliced = $array->splice(0, 2)
-  ## 3-arg splice (replace):
-  $array->splice(0, 1, 'abc');
-
-Performs a C<splice()> on the current list and returns a new array object
-consisting of the items returned from the splice.
-
-The existing array is modified in-place.
+Takes array references or objects and returns a new array object consisting of
+one element from each array, in turn, until all arrays have been traversed
+fully.
 
 =head3 natatime
 
@@ -326,6 +335,25 @@ Returns a new array object consisting of the reversed list of elements.
   my $shuffled = $array->shuffle;
 
 Shuffles the original list and returns a new array object.
+
+=head3 sliced
+
+  my $slice = $array->sliced(1, 3, 5);
+
+Returns a new array object consisting of the elements retrived 
+from the specified indexes.
+
+=head3 splice
+
+  ## 2-arg splice (remove elements):
+  my $spliced = $array->splice(0, 2)
+  ## 3-arg splice (replace):
+  $array->splice(0, 1, 'abc');
+
+Performs a C<splice()> on the current list and returns a new array object
+consisting of the items returned from the splice.
+
+The existing array is modified in-place.
 
 =head3 uniq
 
