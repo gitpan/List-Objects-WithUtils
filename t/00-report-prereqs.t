@@ -21,7 +21,6 @@ my @modules = qw(
   Scalar::Util
   Syntax::Keyword::Junction
   Test::More
-  namespace::clean
   perl
   strictures
 );

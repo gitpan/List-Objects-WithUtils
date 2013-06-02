@@ -23,9 +23,8 @@ requires:
   Role::Tiny: 1
   Scalar::Util: 0
   Syntax::Keyword::Junction: 0.003003
-  namespace::clean: 0
   perl: v5.8.9
   strictures: 1
 resources:
   repository: git://github.com/avenj/list-objects-withutils.git
-version: 1.001000
+version: 1.001001

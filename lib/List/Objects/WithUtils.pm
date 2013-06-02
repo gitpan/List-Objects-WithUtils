@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '1.001000';
+  $List::Objects::WithUtils::VERSION = '1.001001';
 }
 use Carp;
 use strictures 1;

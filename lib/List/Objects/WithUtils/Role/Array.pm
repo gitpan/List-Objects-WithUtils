@@ -1,18 +1,18 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.001000';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.001001';
 }
 use strictures 1;
 
-use Role::Tiny;
+use Carp 'confess';
 
 use List::Util ();
 use List::MoreUtils ();
 use List::UtilsBy ();
 
-use Scalar::Util 'blessed';
+use Scalar::Util 'blessed', 'reftype';
 
-use namespace::clean;
+use Role::Tiny;
 
 sub new {
   bless [ @_[1 .. $#_] ], $_[0] 
@@ -32,16 +32,36 @@ sub get { $_[0]->[ $_[1] ] }
 sub set { $_[0]->[ $_[1] ] = $_[2] ; $_[0] }
 
 sub pop  { CORE::pop @{ $_[0] } }
-sub push { CORE::push @{ $_[0] }, @_[1 .. $#_] ; $_[0] }
+sub push { 
+  CORE::push @{ $_[0] }, @_[1 .. $#_]; 
+  $_[0] 
+}
 
 sub shift   { CORE::shift @{ $_[0] } }
-sub unshift { CORE::unshift @{ $_[0] }, @_[1 .. $#_] ; $_[0] }
+sub unshift { 
+  CORE::unshift @{ $_[0] }, @_[1 .. $#_]; 
+  $_[0] 
+}
 
 sub clear  { @{ $_[0] } = (); $_[0] }
-sub delete { scalar( CORE::splice(@{ $_[0] }, $_[1], 1) ) }
-sub insert { CORE::splice(@{ $_[0] }, $_[1], 0, $_[2]); $_[0] }
 
-sub join { CORE::join( (defined $_[1] ? $_[1] : ','), @{ $_[0] } ) }
+sub delete { 
+  scalar( 
+    CORE::splice @{ $_[0] }, $_[1], 1
+  ) 
+}
+
+sub insert { 
+  CORE::splice @{ $_[0] }, $_[1], 0, $_[2];
+  $_[0] 
+}
+
+sub join { 
+  CORE::join( 
+    ( defined $_[1] ? $_[1] : ',' ), 
+    @{ $_[0] } 
+  ) 
+}
 
 sub map {
   blessed($_[0])->new(
@@ -73,7 +93,7 @@ sub reverse {
 
 sub sliced {
   blessed($_[0])->new(
-    @{$_[0]}[ @_[1 .. $#_] ]
+    @{ $_[0] }[ @_[1 .. $#_] ]
   )
 }
 
@@ -100,6 +120,10 @@ sub firstidx {
 }
 
 sub mesh {
+  for (@_) {
+    confess "Expected ARRAY or compatible obj, got $_"
+      unless (reftype $_ || '') eq 'ARRAY'
+  }
   blessed($_[0])->new(
     &List::MoreUtils::mesh( @_ )
   )
@@ -346,7 +370,8 @@ bundled group.
 Takes a subroutine that indicates into which partition each value should be
 placed.
 
-Returns an array-type object containing array-type objects, as seen above.
+Returns an array-type object containing partitions represented as array-type
+objects, as seen above.
 
 Skipped partitions are empty array objects:
 

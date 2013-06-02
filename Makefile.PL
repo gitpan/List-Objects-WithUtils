@@ -29,13 +29,12 @@ my %WriteMakefileArgs = (
     "Role::Tiny" => 1,
     "Scalar::Util" => 0,
     "Syntax::Keyword::Junction" => "0.003003",
-    "namespace::clean" => 0,
     "strictures" => 1
   },
   "TEST_REQUIRES" => {
     "Test::More" => "0.88"
   },
-  "VERSION" => "1.001000",
+  "VERSION" => "1.001001",
   "test" => {
     "TESTS" => "t/*.t"
   }
