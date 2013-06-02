@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.001001';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.002000';
 }
 use strictures 1;
 
@@ -30,6 +30,24 @@ sub is_empty { CORE::scalar @{ $_[0] } ? 0 : 1 }
 sub all { @{ $_[0] } }
 sub get { $_[0]->[ $_[1] ] }
 sub set { $_[0]->[ $_[1] ] = $_[2] ; $_[0] }
+
+sub head {
+  wantarray ?
+    ( 
+      $_[0]->[0], 
+      blessed($_[0])->new( @{ $_[0] }[ 1 .. $#{$_[0]} ] ) 
+    )
+    : $_[0]->[0]
+}
+
+sub tail {
+  wantarray ?
+    (
+      $_[0]->[-1],
+      blessed($_[0])->new( @{ $_[0] }[ 0 .. ($#{$_[0]} - 1) ] )
+    )
+    : $_[0]->[-1]
+}
 
 sub pop  { CORE::pop @{ $_[0] } }
 sub push { 
@@ -128,14 +146,14 @@ sub mesh {
     &List::MoreUtils::mesh( @_ )
   )
 # In case upstream ever changes, here's a pure-perl impl:
-#  my $max = -1;
+#  my $max_idx = -1;
 #  for my $item (@_) {
-#    $max = $#$item if $max < $#$item
+#    $max_idx = $#$item if $max_idx < $#$item
 #  }
 #  blessed($_[0])->new(
 #    map {;
-#      my $idx = $_; map $_->[$idx], @_
-#    } 0 .. $max
+#      my $idx = $_; map {; $_->[$idx] } @_
+#    } 0 .. $max_idx
 #  )
 }
 
@@ -254,7 +272,7 @@ L<List::Objects::WithUtils::Array> consumes this role (along with
 L<List::Objects::WithUtils::Role::WithJunctions>) to provide B<array()> object
 methods.
 
-=head2 Basic Array Methods
+=head2 Basic array methods
 
 =head3 new
 
@@ -274,7 +292,7 @@ Returns the number of elements in the array.
 
 =head3 scalar
 
-Same as calling L</count>; returns the number of elements in the array.
+See L</count>.
 
 =head3 is_empty
 
@@ -334,16 +352,40 @@ Joins the array's elements and returns the joined string.
 
 Defaults to ',' if no delimiter is specified.
 
+=head3 head
+
+  my ($first, $rest) = $array->head;
+
+In list context, returns the first element of the list, and a new array-type
+object containing the remaining list. The original object's list is untouched.
+
+In scalar context, returns just the first element of the array:
+
+  my $first = $array->head;
+
+=head3 tail
+
+Similar to L</head>, but returns either the last element and a new array-type
+object containing the remaining list (in list context), or just the last
+element of the list (in scalar context).
+
 =head3 mesh
 
   my $meshed = array(qw/ a b c /)->mesh(
-    array( 1, 2, 3 )
+    array( 1 .. 3 )
   );
-  #  [ 'a', 1, 'b', 2, 'c', 3 ]
+  $meshed->all;  # 'a', 1, 'b', 2, 'c', 3
 
 Takes array references or objects and returns a new array object consisting of
 one element from each array, in turn, until all arrays have been traversed
 fully.
+
+You can mix and match references and objects freely:
+
+  my $meshed = array(qw/ a b c /)->mesh(
+    array( 1 .. 3 ),
+    [ qw/ foo bar baz / ],
+  );
 
 =head3 natatime
 
@@ -379,6 +421,13 @@ Skipped partitions are empty array objects:
   $parts->get(0)->is_empty;  # true
   $parts->get(1)->is_empty;  # false
 
+The subroutine is passed the value we are operating on:
+
+  array(qw/foo bar baz 1 2 3/)
+    ->part(sub { $_[0] =~ /^[0-9]+$/ ? 0 : 1 })
+    ->get(1)
+    ->all;   # 'foo', 'bar', 'baz'
+
 =head3 reverse
 
 Returns a new array object consisting of the reversed list of elements.
@@ -387,7 +436,7 @@ Returns a new array object consisting of the reversed list of elements.
 
   my $shuffled = $array->shuffle;
 
-Shuffles the original list and returns a new array object.
+Returns a new array object containing the shuffled list.
 
 =head3 sliced
 
@@ -417,13 +466,6 @@ array.
 
 =head2 Methods that take subs with params
 
-=head3 map
-
-  my $lowercased = $array->map(sub { lc $_[0] });
-
-Evaluates a given subroutine for each element of the array, and returns a new
-array object. C<$_[0]> is the element being operated upon.
-
 =head3 grep
 
   my $matched = $array->grep(sub { $_[0] =~ /foo/ });
@@ -432,15 +474,12 @@ Returns a new array object consisting of the list of elements for which the
 given subroutine evaluated to true. C<$_[0]> is the element being operated
 upon.
 
-=head3 sort
+=head3 map
 
-  my $sorted = $array->sort(sub { $_[0] cmp $_[1] });
+  my $lowercased = $array->map(sub { lc $_[0] });
 
-Returns a new array object consisting of the list sorted by the given
-subroutine. C<$_[0]> and C<$_[1]> are equivalent to C<$a> and C<$b> in a
-normal sort() call.
-
-The existing array is not modified.)
+Evaluates a given subroutine for each element of the array, and returns a new
+array object. C<$_[0]> is the element being operated upon.
 
 =head3 reduce
 
@@ -448,6 +487,14 @@ The existing array is not modified.)
 
 Reduces the array by calling the given subroutine for each element of the
 list. See L<List::Util/"reduce">.
+
+=head3 sort
+
+  my $sorted = $array->sort(sub { $_[0] cmp $_[1] });
+
+Returns a new array object consisting of the list sorted by the given
+subroutine. C<$_[0]> and C<$_[1]> are equivalent to C<$a> and C<$b> in a
+normal sort() call.
 
 =head2 Methods that take subs with topicalizer
 

@@ -299,6 +299,8 @@ ok( not($arr->all_items == 2), 'not all_items == 2 ok' );
 $arr = array(1, 1, 1);
 ok( $arr->all_items == 1, 'all_items == 1 ok' );
 
+undef $arr;
+
 ## mesh()
 my $mesh_even = array(qw/ a b c d /)->mesh( array(1, 2, 3, 4) );
 is_deeply( 
@@ -306,6 +308,8 @@ is_deeply(
   [ 'a', 1, 'b', 2, 'c', 3, 'd', 4 ],
   'mesh even list ok'
 );
+
+undef $mesh_even;
 
 my @u_one; $#u_one = 9;
 my $with_holes = array( 1 .. 10 )->mesh( array(@u_one) );
@@ -318,6 +322,8 @@ is_deeply(
   'mesh with undef-filled list ok'
 );
 
+undef $with_holes;
+
 my @a_one = ( 1, 2 );
 my @a_two = qw/ foo bar baz /;
 # mesh() with mixed array obj / array ref
@@ -328,9 +334,13 @@ is_deeply(
   'mesh with array/ref mix ok'
 );
 
+undef @a_one; undef @a_two;
+undef $mesh_multi;
+
 eval {; array( 'foo' )->mesh( 'bar' ) };
 ok( $@ =~ /Expected ARRAY/, 'mesh with bad args dies' )
   or diag explain $@;
+
 
 ## part()
 my $parts_n = do {
@@ -354,6 +364,8 @@ is_deeply(
   'part() third array ok'
 );
 
+undef $parts_n;
+
 my $parts_single = array(1 .. 12)->part(sub { 3 });
 ok( $parts_single->get(0)->count == 0, 'part() 0 empty ok' );
 ok( $parts_single->get(1)->count == 0, 'part() 1 empty ok' );
@@ -362,6 +374,19 @@ is_deeply(
   [ $parts_single->get(3)->all ],
   [ 1 .. 12 ],
   'part() 3 filled ok'
+);
+
+undef $parts_single;
+
+is_deeply(
+  [ 
+    array(qw/foo bar baz 1 2 3/)
+      ->part(sub { $_[0] =~ /^[0-9]+$/ ? 0 : 1 })
+      ->get(1)
+      ->all
+  ],
+  [ 'foo', 'bar', 'baz' ],
+  'part() with args ok'
 );
 
 done_testing;

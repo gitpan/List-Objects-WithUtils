@@ -10,6 +10,7 @@ dist.ini
 examples/blog-post-list-objects.mkdn
 lib/List/Objects/WithUtils.pm
 lib/List/Objects/WithUtils/Array.pm
+lib/List/Objects/WithUtils/Array/Immutable.pm
 lib/List/Objects/WithUtils/Hash.pm
 lib/List/Objects/WithUtils/Role/Array.pm
 lib/List/Objects/WithUtils/Role/Hash.pm
@@ -18,6 +19,7 @@ t/00-report-prereqs.t
 t/00_loadable.t
 t/array.t
 t/hash.t
+t/immutable.t
 t/release-dist-manifest.t
 t/release-no-tabs.t
 t/release-pod-coverage.t

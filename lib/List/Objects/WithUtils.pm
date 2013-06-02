@@ -1,13 +1,13 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '1.001001';
+  $List::Objects::WithUtils::VERSION = '1.002000';
 }
 use Carp;
 use strictures 1;
 
 sub import {
   my ($class, @funcs) = @_;
-  @funcs = qw/ array hash / unless @funcs;
+  @funcs = qw/ array immarray hash / unless @funcs;
 
   my @mods;
   for my $function (@funcs) {
@@ -17,6 +17,10 @@ sub import {
     }
     if ($function eq 'hash') {
       push @mods, 'List::Objects::WithUtils::Hash'; 
+      next
+    }
+    if ($function eq 'immarray') {
+      push @mods, 'List::Objects::WithUtils::Array::Immutable';
       next
     }
   }
@@ -84,6 +88,11 @@ B<array> is imported from L<List::Objects::WithUtils::Array> and creates a new
 ARRAY-type object. 
 Behavior is defined by L<List::Objects::WithUtils::Role::Array>; look
 there for documentation on available methods.
+
+B<immarray> is imported from L<List::Objects::WithUtils::Array::Immutable> and
+operates much like an B<array>, except methods that mutate the list are not
+available and the backing ARRAY is marked read-only; using immutable arrays 
+promotes safer functional patterns.
 
 B<hash> is imported from L<List::Objects::WithUtils::Hash>; see  
 L<List::Objects::WithUtils::Role::Hash> for documentation.

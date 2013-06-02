@@ -27,4 +27,4 @@ requires:
   strictures: 1
 resources:
   repository: git://github.com/avenj/list-objects-withutils.git
-version: 1.001001
+version: 1.002000

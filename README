@@ -40,6 +40,11 @@ DESCRIPTION
     List::Objects::WithUtils::Role::Array; look there for documentation on
     available methods.
 
+    immarray is imported from List::Objects::WithUtils::Array::Immutable and
+    operates much like an array, except methods that mutate the list are not
+    available and the backing ARRAY is marked read-only; using immutable
+    arrays promotes safer functional patterns.
+
     hash is imported from List::Objects::WithUtils::Hash; see
     List::Objects::WithUtils::Role::Hash for documentation.
 

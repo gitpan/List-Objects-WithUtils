@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '1.001001';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '1.002000';
 }
 use strictures 1;
 
@@ -17,6 +17,10 @@ sub new {
 sub array_type { 'List::Objects::WithUtils::Array' }
 
 sub clear { %{ $_[0] } = () }
+
+sub copy {
+  bless +{ %{ $_[0] } }, blessed($_[0])
+}
 
 sub defined { CORE::defined $_[0]->{ $_[1] } }
 sub exists  { CORE::exists  $_[0]->{ $_[1] } }
@@ -155,6 +159,10 @@ will be returned:
 
 Clears the current hash entirely.
 
+=head2 copy
+
+Creates a shallow clone of the current object.
+
 =head2 is_empty
 
 Returns boolean true if the hash has no keys.
@@ -164,6 +172,14 @@ Returns boolean true if the hash has no keys.
   if ( $hash->defined($key) ) { ... }
 
 Returns boolean true if the key has a defined value.
+
+=head2 delete
+
+  $hash->delete( @keys );
+
+Deletes keys from the hash.
+
+Returns an L</array_type> object containing the deleted values.
 
 =head2 exists
 
@@ -181,14 +197,6 @@ Retrieves a key or list of keys from the hash.
 If we're taking a slice (multiple keys were specified), values are returned
 as an L</array_type> object. (See L</sliced> if you'd rather generate a new
 hash.)
-
-=head2 sliced
-
-  my $newhash = $hash->slice(@keys);
-
-Returns a new hash object built from the specified set of keys.
-
-(See L</get> if you only need the values.)
 
 =head2 keys
 
@@ -222,13 +230,13 @@ Sets keys in the hash.
 
 Returns an L</array_type> object containing the new values.
 
-=head2 delete
+=head2 sliced
 
-  $hash->delete( @keys );
+  my $newhash = $hash->slice(@keys);
 
-Deletes keys from the hash.
+Returns a new hash object built from the specified set of keys.
 
-Returns an L</array_type> object containing the deleted values.
+(See L</get> if you only need the values.)
 
 =head1 SEE ALSO
 
