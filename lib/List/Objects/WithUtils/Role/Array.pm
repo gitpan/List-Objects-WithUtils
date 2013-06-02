@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.000003';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.001000';
 }
 use strictures 1;
 
@@ -122,6 +122,16 @@ sub natatime {
   } else { 
     return $itr
   }
+}
+
+sub part {
+  my ($self, $code) = @_;
+  my @parts;
+  CORE::push @{ $parts[ $code->($_) ] }, $_ for @$self;
+  my $cls = blessed $self;
+  $cls->new(
+    map {; $cls->new(defined $_ ? @$_ : () ) } @parts
+  )
 }
 
 sub reduce {
@@ -325,6 +335,24 @@ Returns an iterator that, when called, produces a list containing the next
 
 If given a coderef as a second argument, it will be called against each
 bundled group.
+
+=head3 part
+
+  my $parts = array( 1 .. 8 )->part(sub { $i++ % 2 });
+  # Returns array objects:
+  $parts->get(0)->all;  # 1, 3, 5, 7
+  $parts->get(1)->all;  # 2, 4, 6, 8
+
+Takes a subroutine that indicates into which partition each value should be
+placed.
+
+Returns an array-type object containing array-type objects, as seen above.
+
+Skipped partitions are empty array objects:
+
+  my $parts = array(qw/ foo bar /)->part(sub { 1 });
+  $parts->get(0)->is_empty;  # true
+  $parts->get(1)->is_empty;  # false
 
 =head3 reverse
 
