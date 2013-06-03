@@ -28,13 +28,14 @@ my %WriteMakefileArgs = (
     "Module::Runtime" => "0.013",
     "Role::Tiny" => 1,
     "Scalar::Util" => 0,
+    "Storable" => 0,
     "Syntax::Keyword::Junction" => "0.003003",
     "strictures" => 1
   },
   "TEST_REQUIRES" => {
     "Test::More" => "0.88"
   },
-  "VERSION" => "1.002000",
+  "VERSION" => "1.002001",
   "test" => {
     "TESTS" => "t/*.t"
   }

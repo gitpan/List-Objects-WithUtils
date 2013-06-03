@@ -36,6 +36,7 @@
             "Module::Runtime" : "0.013",
             "Role::Tiny" : "1",
             "Scalar::Util" : "0",
+            "Storable" : "0",
             "Syntax::Keyword::Junction" : "0.003003",
             "perl" : "v5.8.9",
             "strictures" : "1"
@@ -55,6 +56,6 @@
          "web" : "git://github.com/avenj/list-objects-withutils"
       }
    },
-   "version" : "1.002000"
+   "version" : "1.002001"
 }
 

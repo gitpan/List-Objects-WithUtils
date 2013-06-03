@@ -1,46 +1,34 @@
 package List::Objects::WithUtils::Array::Immutable;
 {
-  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.002000';
+  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.002001';
 }
 use strictures 1;
 use Carp 'confess';
 
-use Role::Tiny::With;
 require List::Objects::WithUtils::Array;
-
 our @ISA = 'List::Objects::WithUtils::Array';
 
 use Exporter 'import';
 our @EXPORT = 'immarray';
 sub immarray { __PACKAGE__->new(@_) }
 
-use Scalar::Util 'reftype', 'blessed';
+use Scalar::Util 'blessed';
 use Storable 'dclone';
-
-sub _mk_ro {
-  ## Borrowed from Const::Fast
-  my (undef, $skip_clone, $bless) = @_;
-  if (
-    (reftype $_[0] || '') eq 'ARRAY' 
-    && ! blessed($_[0])
-    && ! &Internals::SvREADONLY($_[0])
-  ) {
-    my $do_clone = !$skip_clone && &Internals::SvREFCNT($_[0]) > 1;
-    $_[0] = dclone($_[0]) if $do_clone;
-    bless $_[0], $bless if $bless;
-    &Internals::SvREADONLY($_[0], 1);
-    _mk_ro($_) for @{ $_[0] };
-  }
-  Internals::SvREADONLY($_[0], 1);
-  $_[0]
-}
 
 sub new {
   my $self = [ @_[1 .. $#_] ];
-  _mk_ro($self, 1, $_[0])
+
+  bless $self, $_[0];
+  &Internals::SvREADONLY($self, 1);
+
+  for my $item (@$self) {
+    Internals::SvREADONLY($item, 1);
+  }
+
+  $self
 }
 
-sub ___unimp {
+sub __unimp {
   confess 'Method not implemented'
 }
 
@@ -65,15 +53,15 @@ splice
 =cut
 
 { no warnings 'once';
-  *clear = *___unimp;
-  *set   = *___unimp;
-  *pop   = *___unimp;
-  *push  = *___unimp;
-  *shift = *___unimp;
-  *unshift = *___unimp;
-  *delete  = *___unimp;
-  *insert  = *___unimp;
-  *splice  = *___unimp;
+  *clear = *__unimp;
+  *set   = *__unimp;
+  *pop   = *__unimp;
+  *push  = *__unimp;
+  *shift = *__unimp;
+  *unshift = *__unimp;
+  *delete  = *__unimp;
+  *insert  = *__unimp;
+  *splice  = *__unimp;
 }
 
 1;
@@ -112,6 +100,6 @@ manually modify the backing ARRAY reference will throw an exception.
 
 Jon Portnoy <avenj@cobaltirc.org>
 
-Licensed under the same terms as Perl
+Licensed under the same terms as Perl.
 
 =cut

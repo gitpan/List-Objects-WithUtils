@@ -19,6 +19,7 @@ my @modules = qw(
   Module::Runtime
   Role::Tiny
   Scalar::Util
+  Storable
   Syntax::Keyword::Junction
   Test::More
   perl
