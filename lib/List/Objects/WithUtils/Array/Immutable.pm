@@ -1,9 +1,9 @@
 package List::Objects::WithUtils::Array::Immutable;
 {
-  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.002001';
+  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.002002';
 }
 use strictures 1;
-use Carp 'confess';
+use Carp 'croak';
 
 require List::Objects::WithUtils::Array;
 our @ISA = 'List::Objects::WithUtils::Array';
@@ -17,20 +17,37 @@ use Storable 'dclone';
 
 sub new {
   my $self = [ @_[1 .. $#_] ];
-
   bless $self, $_[0];
-  &Internals::SvREADONLY($self, 1);
 
-  for my $item (@$self) {
-    Internals::SvREADONLY($item, 1);
-  }
+  &Internals::SvREADONLY($self, 1);
+  Internals::SvREADONLY($_, 1) for @$self;
 
   $self
 }
 
-sub __unimp {
-  confess 'Method not implemented'
+
+sub __unimp { 
+  local $Carp::CarpLevel = 1;
+  croak 'Method not implemented on immutable arrays'
 }
+{ no warnings 'once';
+  *clear = *__unimp;
+  *set   = *__unimp;
+  *pop   = *__unimp;
+  *push  = *__unimp;
+  *shift = *__unimp;
+  *unshift = *__unimp;
+  *delete  = *__unimp;
+  *insert  = *__unimp;
+  *splice  = *__unimp;
+}
+
+print
+ qq[<LeoNerd> Coroutines are not magic pixiedust\n],
+ qq[<DrForr> LeoNerd: Any sufficiently advanced technology.\n],
+ qq[<LeoNerd> DrForr: ... probably corrupts the C stack during XS calls? ;)\n],
+unless caller;
+1;
 
 =pod
 
@@ -49,24 +66,6 @@ insert
 splice
 
 =end Pod::Coverage
-
-=cut
-
-{ no warnings 'once';
-  *clear = *__unimp;
-  *set   = *__unimp;
-  *pop   = *__unimp;
-  *push  = *__unimp;
-  *shift = *__unimp;
-  *unshift = *__unimp;
-  *delete  = *__unimp;
-  *insert  = *__unimp;
-  *splice  = *__unimp;
-}
-
-1;
-
-=pod
 
 =head1 NAME
 

@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '1.002001';
+  $List::Objects::WithUtils::VERSION = '1.002002';
 }
 use Carp;
 use strictures 1;
@@ -38,6 +38,9 @@ sub import {
   1
 }
 
+print
+  qq[ * rjbs is patching PAUSE.\n<rjbs> (to reject anything from peregrin)\n]
+unless caller;
 
 1;
 

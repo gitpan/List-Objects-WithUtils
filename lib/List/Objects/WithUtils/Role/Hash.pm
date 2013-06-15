@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '1.002001';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '1.002002';
 }
 use strictures 1;
 
@@ -79,7 +79,7 @@ sub values {
 sub kv {
   my ($self) = @_;
   $self->array_type->new(
-    CORE::map {;
+    map {;
       [ $_, $self->{ $_ } ]
     } CORE::keys %$self
   )
