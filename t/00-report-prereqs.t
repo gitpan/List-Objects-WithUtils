@@ -22,6 +22,7 @@ my @modules = qw(
   Storable
   Syntax::Keyword::Junction
   Test::More
+  autobox
   perl
   strictures
 );

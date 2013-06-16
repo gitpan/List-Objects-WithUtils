@@ -30,14 +30,15 @@ my %WriteMakefileArgs = (
     "Scalar::Util" => 0,
     "Storable" => 0,
     "Syntax::Keyword::Junction" => "0.003003",
+    "autobox" => 0,
     "strictures" => 1
   },
   "TEST_REQUIRES" => {
     "Test::More" => "0.88"
   },
-  "VERSION" => "1.002002",
+  "VERSION" => "1.003000",
   "test" => {
-    "TESTS" => "t/*.t"
+    "TESTS" => "t/*.t t/t_autoboxed/*.t"
   }
 );
 

@@ -24,8 +24,9 @@ requires:
   Scalar::Util: 0
   Storable: 0
   Syntax::Keyword::Junction: 0.003003
+  autobox: 0
   perl: v5.8.9
   strictures: 1
 resources:
   repository: git://github.com/avenj/list-objects-withutils.git
-version: 1.002002
+version: 1.003000

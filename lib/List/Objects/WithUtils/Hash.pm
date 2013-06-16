@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Hash;
 {
-  $List::Objects::WithUtils::Hash::VERSION = '1.002002';
+  $List::Objects::WithUtils::Hash::VERSION = '1.003000';
 }
 use strictures 1;
 
@@ -17,7 +17,7 @@ sub hash { __PACKAGE__->new(@_) }
 
 =head1 NAME
 
-List::Objects::WithUtils::Hash - A hash container class
+List::Objects::WithUtils::Hash - Hash-type objects WithUtils
 
 =head1 SYNOPSIS
 
@@ -32,7 +32,7 @@ L<List::Objects::WithUtils::Role::Hash>. Methods are documented there.
 
 =head2 hash
 
-Creates a new hash container object.
+Creates a new hash object.
 
 =head1 AUTHOR
 

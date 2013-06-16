@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Array;
 {
-  $List::Objects::WithUtils::Array::VERSION = '1.002002';
+  $List::Objects::WithUtils::Array::VERSION = '1.003000';
 }
 use strictures 1;
 
@@ -18,7 +18,7 @@ sub array { __PACKAGE__->new(@_) }
 
 =head1 NAME
 
-List::Objects::WithUtils::Array - An array container class
+List::Objects::WithUtils::Array - Array-type objects WithUtils
 
 =head1 SYNOPSIS
 
@@ -35,7 +35,7 @@ This class also consumes L<List::Objects::WithUtils::Role::WithJunctions>.
 
 =head2 array
 
-Creates a new array container object.
+Creates a new array object.
 
 =head1 AUTHOR
 

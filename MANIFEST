@@ -11,10 +11,12 @@ examples/blog-post-list-objects.mkdn
 lib/List/Objects/WithUtils.pm
 lib/List/Objects/WithUtils/Array.pm
 lib/List/Objects/WithUtils/Array/Immutable.pm
+lib/List/Objects/WithUtils/Autobox.pm
 lib/List/Objects/WithUtils/Hash.pm
 lib/List/Objects/WithUtils/Role/Array.pm
 lib/List/Objects/WithUtils/Role/Hash.pm
 lib/List/Objects/WithUtils/Role/WithJunctions.pm
+lib/Lowu.pm
 t/00-report-prereqs.t
 t/00_loadable.t
 t/array.t
@@ -27,3 +29,5 @@ t/release-pod-linkcheck.t
 t/release-pod-syntax.t
 t/release-synopsis.t
 t/release-unused-vars.t
+t/t_autoboxed/array.t
+t/t_autoboxed/hash.t

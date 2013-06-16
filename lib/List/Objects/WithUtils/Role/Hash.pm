@@ -1,25 +1,41 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '1.002002';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '1.003000';
 }
 use strictures 1;
 
 use Module::Runtime 'require_module';
 use Scalar::Util 'blessed';
 
+=pod
+
+=for Pod::Coverage HASH_TYPE blessed_or_pkg
+
+=cut
+
+sub HASH_TYPE () { 'List::Objects::WithUtils::Hash' }
+my $_required;
+sub blessed_or_pkg { 
+  my $pkg; ($pkg = blessed $_[0]) ? return $pkg
+    : $_required ? 
+      return HASH_TYPE
+    : eval( 'require ' . HASH_TYPE . ';1' ) and $_required++,
+      return HASH_TYPE
+}
+
 use Role::Tiny;
+
+sub array_type { 'List::Objects::WithUtils::Array' }
 
 sub new {
   require_module( $_[0]->array_type );
   bless +{ @_[1 .. $#_] }, $_[0]
 }
 
-sub array_type { 'List::Objects::WithUtils::Array' }
-
 sub clear { %{ $_[0] } = () }
 
 sub copy {
-  bless +{ %{ $_[0] } }, blessed($_[0])
+  bless +{ %{ $_[0] } }, blessed_or_pkg($_[0])
 }
 
 sub defined { CORE::defined $_[0]->{ $_[1] } }
@@ -29,7 +45,7 @@ sub is_empty { keys %{ $_[0] } ? 0 : 1 }
 
 sub get {
   if (@_ > 2) {
-    return $_[0]->array_type->new(
+    return blessed_or_pkg($_[0])->array_type->new(
       @{ $_[0] }{@_}
     )
   }
@@ -37,7 +53,7 @@ sub get {
 }
 
 sub sliced {
-  blessed($_[0])->new(
+  blessed_or_pkg($_[0])->new(
     map {;
       exists $_[0]->{$_} ? 
         ( $_ => $_[0]->{$_} )
@@ -53,32 +69,32 @@ sub set {
 
   @{$self}{ @_[@keysidx] } = @_[@valsidx];
 
-  $self->array_type->new(
+  blessed_or_pkg($self)->array_type->new(
     @{$self}{ @_[@keysidx] }
   )
 }
 
 sub delete {
-  $_[0]->array_type->new(
+  blessed_or_pkg($_[0])->array_type->new(
     CORE::delete @{ $_[0] }{ @_[1 .. $#_] }
   )
 }
 
 sub keys {
-  $_[0]->array_type->new(
+  blessed_or_pkg($_[0])->array_type->new(
     CORE::keys %{ $_[0] }
   )
 }
 
 sub values {
-  $_[0]->array_type->new(
+  blessed_or_pkg($_[0])->array_type->new(
     CORE::values %{ $_[0] }
   )
 }
 
 sub kv {
   my ($self) = @_;
-  $self->array_type->new(
+  blessed_or_pkg($self)->array_type->new(
     map {;
       [ $_, $self->{ $_ } ]
     } CORE::keys %$self

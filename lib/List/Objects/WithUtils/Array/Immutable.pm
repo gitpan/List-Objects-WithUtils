@@ -1,12 +1,11 @@
 package List::Objects::WithUtils::Array::Immutable;
 {
-  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.002002';
+  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.003000';
 }
 use strictures 1;
 use Carp 'croak';
 
-require List::Objects::WithUtils::Array;
-our @ISA = 'List::Objects::WithUtils::Array';
+use parent 'List::Objects::WithUtils::Array';
 
 use Exporter 'import';
 our @EXPORT = 'immarray';
