@@ -23,6 +23,7 @@ my @modules = qw(
   Syntax::Keyword::Junction
   Test::More
   autobox
+  parent
   perl
   strictures
 );

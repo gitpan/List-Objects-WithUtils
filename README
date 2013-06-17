@@ -67,7 +67,7 @@ SYNOPSIS
       # Simple hash operations; construct a hash:
       my $hash  = hash( foo => 'bar', snacks => 'cake' );
   
-      # It's trivial to set multiple keys:
+      # You can set multiple keys in one call:
       $hash->set( foobar => 'baz', pie => 'cherry' );
       # ... which is useful for merging in another (plain) hash:
       my %foo = ( pie => 'pumpkin', snacks => 'cheese' );
@@ -136,9 +136,10 @@ DESCRIPTION
     providing methods for native ARRAY and HASH types.
 
     A bare import list ("use List::Objects::WithUtils;") will import the
-    "array", "immarray", and "hash" functions. Importing all or :all will
-    import all of the above and additionally turn autobox on, as will the
-    shortcut "use Lowu;" (as of 1.003).
+    "array", "immarray", and "hash" functions.
+
+    Importing all or :all will import all of the above and additionally turn
+    autobox on, as will the shortcut "use Lowu;" (as of 1.003).
 
     Why another object-oriented list module?
 
