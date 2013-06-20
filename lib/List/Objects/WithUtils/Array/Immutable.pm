@@ -1,18 +1,17 @@
 package List::Objects::WithUtils::Array::Immutable;
 {
-  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.003001';
+  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.004000';
 }
 use strictures 1;
-use Carp 'croak';
+require Carp;
 
 use parent 'List::Objects::WithUtils::Array';
+
 
 use Exporter 'import';
 our @EXPORT = 'immarray';
 sub immarray { __PACKAGE__->new(@_) }
 
-use Scalar::Util 'blessed';
-use Storable 'dclone';
 
 sub new {
   my $self = [ @_[1 .. $#_] ];
@@ -27,7 +26,7 @@ sub new {
 
 sub __unimp { 
   local $Carp::CarpLevel = 1;
-  croak 'Method not implemented on immutable arrays'
+  Carp::croak 'Method not implemented on immutable arrays'
 }
 { no warnings 'once';
   *clear = *__unimp;

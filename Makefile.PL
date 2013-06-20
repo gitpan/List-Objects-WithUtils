@@ -29,7 +29,6 @@ my %WriteMakefileArgs = (
     "Role::Tiny" => 1,
     "Scalar::Util" => 0,
     "Storable" => 0,
-    "Syntax::Keyword::Junction" => "0.003003",
     "autobox" => 0,
     "parent" => 0,
     "strictures" => 1
@@ -37,9 +36,9 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "Test::More" => "0.88"
   },
-  "VERSION" => "1.003001",
+  "VERSION" => "1.004000",
   "test" => {
-    "TESTS" => "t/*.t t/t_autoboxed/*.t"
+    "TESTS" => "t/*.t t/t_autoboxed/*.t t/t_junction/*.t"
   }
 );
 

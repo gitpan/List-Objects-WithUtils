@@ -20,7 +20,6 @@ my @modules = qw(
   Role::Tiny
   Scalar::Util
   Storable
-  Syntax::Keyword::Junction
   Test::More
   autobox
   parent

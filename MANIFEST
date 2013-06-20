@@ -11,6 +11,7 @@ examples/blog-post-list-objects.mkdn
 lib/List/Objects/WithUtils.pm
 lib/List/Objects/WithUtils/Array.pm
 lib/List/Objects/WithUtils/Array/Immutable.pm
+lib/List/Objects/WithUtils/Array/Junction.pm
 lib/List/Objects/WithUtils/Autobox.pm
 lib/List/Objects/WithUtils/Hash.pm
 lib/List/Objects/WithUtils/Role/Array.pm
@@ -31,3 +32,5 @@ t/release-synopsis.t
 t/release-unused-vars.t
 t/t_autoboxed/array.t
 t/t_autoboxed/hash.t
+t/t_junction/all.t
+t/t_junction/any.t
