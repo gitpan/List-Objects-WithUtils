@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Autobox;
 {
-  $List::Objects::WithUtils::Autobox::VERSION = '1.004000';
+  $List::Objects::WithUtils::Autobox::VERSION = '1.005000';
 }
 use strictures 1;
 require Carp;
@@ -27,11 +27,9 @@ sub import {
   %params = map {; lc($_) => $params{$_} } keys %params;
   $class->SUPER::import( 
     ARRAY => 
-      Module::Runtime::use_package_optimistically($params{array} || ARRAY_TYPE) 
-  );
-  $class->SUPER::import( 
+      Module::Runtime::use_package_optimistically($params{array} || ARRAY_TYPE),
     HASH  => 
-      Module::Runtime::use_package_optimistically($params{hash}  || HASH_TYPE)  
+      Module::Runtime::use_package_optimistically($params{hash}  || HASH_TYPE)
   );
 }
 

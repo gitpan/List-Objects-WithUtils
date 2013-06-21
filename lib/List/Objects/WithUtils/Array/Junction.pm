@@ -1,11 +1,12 @@
 package List::Objects::WithUtils::Array::Junction;
 {
-  $List::Objects::WithUtils::Array::Junction::VERSION = '1.004000';
+  $List::Objects::WithUtils::Array::Junction::VERSION = '1.005000';
 }
 
 { package 
     List::Objects::WithUtils::Array::Junction::Base;
   use strictures 1;
+  use parent 'List::Objects::WithUtils::Array';
   use overload
     '=='   => 'num_eq',
     '!='   => 'num_ne',
@@ -22,8 +23,6 @@ package List::Objects::WithUtils::Array::Junction;
     'bool' => 'bool',
     '""'   => sub { shift },
   ;
-
-  sub new { bless [ @_[1 .. $#_] ], $_[0] }
 }
 { package 
     List::Objects::WithUtils::Array::Junction::All;
@@ -246,7 +245,7 @@ package List::Objects::WithUtils::Array::Junction;
 
 =head1 NAME
 
-List::Objects::WithUtils::Array::Junction
+List::Objects::WithUtils::Array::Junction - Lightweight junction classes
 
 =head1 SYNOPSIS
 
@@ -254,15 +253,18 @@ List::Objects::WithUtils::Array::Junction
 
 =head1 DESCRIPTION
 
-These are light-weight junction objects covering a subset of the functionality
+These are light-weight junction objects covering most of the functionality
 provided by L<Syntax::Keyword::Junction>. They provide the C<all_items> and
 C<any_items> methods defined by
 L<List::Objects::WithUtils::Role::WithJunctions>.
 
 Only the junction types used by L<List::Objects::WithUtils> ('any' and 'all')
 are implemented; nothing is exported. The C<~~> smart-match operator is not
-supposed. See L<Syntax::Keyword::Junction> if you were looking for a
+supported. See L<Syntax::Keyword::Junction> if you were looking for a
 stand-alone implementation with more features.
+
+The junction objects produced are subclasses of
+L<List::Objects::WithUtils::Array>.
 
 See L<List::Objects::WithUtils::Role::WithJunctions> for usage details.
 
@@ -279,7 +281,7 @@ warnings under perl-5.18.x).
 =head1 AUTHOR
 
 This code is originally derived from L<Perl6::Junction> by way of
-L<Syntax::Keyword::Junction>.
+L<Syntax::Keyword::Junction>; the original author is Carl Franks, based on the
+Perl6 design documentation.
 
-Slimmed down and adapted to L<List::Objects::WithUtils> by Jon Portnoy
-<avenj@cobaltirc.org>
+Adapted to L<List::Objects::WithUtils> by Jon Portnoy <avenj@cobaltirc.org>

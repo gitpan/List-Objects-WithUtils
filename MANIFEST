@@ -34,3 +34,4 @@ t/t_autoboxed/array.t
 t/t_autoboxed/hash.t
 t/t_junction/all.t
 t/t_junction/any.t
+t/t_junction/subclasses.t
