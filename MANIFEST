@@ -14,6 +14,8 @@ lib/List/Objects/WithUtils/Array/Immutable.pm
 lib/List/Objects/WithUtils/Array/Junction.pm
 lib/List/Objects/WithUtils/Autobox.pm
 lib/List/Objects/WithUtils/Hash.pm
+lib/List/Objects/WithUtils/Hash/Inflated.pm
+lib/List/Objects/WithUtils/Hash/Inflated/RW.pm
 lib/List/Objects/WithUtils/Role/Array.pm
 lib/List/Objects/WithUtils/Role/Hash.pm
 lib/List/Objects/WithUtils/Role/WithJunctions.pm
@@ -35,3 +37,4 @@ t/t_autoboxed/hash.t
 t/t_junction/all.t
 t/t_junction/any.t
 t/t_junction/subclasses.t
+xt/json.t

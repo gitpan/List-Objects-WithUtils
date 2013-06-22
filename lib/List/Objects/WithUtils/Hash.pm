@@ -1,11 +1,13 @@
 package List::Objects::WithUtils::Hash;
 {
-  $List::Objects::WithUtils::Hash::VERSION = '1.005000';
+  $List::Objects::WithUtils::Hash::VERSION = '1.006000';
 }
 use strictures 1;
 
-use Role::Tiny::With;
-with 'List::Objects::WithUtils::Role::Hash';
+require Role::Tiny;
+Role::Tiny->apply_roles_to_package( __PACKAGE__,
+  'List::Objects::WithUtils::Role::Hash'
+);
 
 use Exporter 'import';
 our @EXPORT = 'hash';

@@ -19,7 +19,6 @@ my @modules = qw(
   Module::Runtime
   Role::Tiny
   Scalar::Util
-  Storable
   Test::More
   autobox
   parent

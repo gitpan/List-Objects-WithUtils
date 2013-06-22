@@ -28,7 +28,6 @@ my %WriteMakefileArgs = (
     "Module::Runtime" => "0.013",
     "Role::Tiny" => 1,
     "Scalar::Util" => 0,
-    "Storable" => 0,
     "autobox" => 0,
     "parent" => 0,
     "strictures" => 1
@@ -36,7 +35,7 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "Test::More" => "0.88"
   },
-  "VERSION" => "1.005000",
+  "VERSION" => "1.006000",
   "test" => {
     "TESTS" => "t/*.t t/t_autoboxed/*.t t/t_junction/*.t"
   }

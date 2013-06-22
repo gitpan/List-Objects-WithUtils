@@ -1,12 +1,16 @@
 package List::Objects::WithUtils::Array;
 {
-  $List::Objects::WithUtils::Array::VERSION = '1.005000';
+  $List::Objects::WithUtils::Array::VERSION = '1.006000';
 }
 use strictures 1;
 
-use Role::Tiny::With;
-with 'List::Objects::WithUtils::Role::Array',
-     'List::Objects::WithUtils::Role::WithJunctions';
+require Role::Tiny;
+Role::Tiny->apply_roles_to_package( __PACKAGE__,
+  qw/
+    List::Objects::WithUtils::Role::Array
+    List::Objects::WithUtils::Role::WithJunctions
+   /
+);
 
 use Exporter 'import';
 our @EXPORT = 'array';

@@ -1,27 +1,35 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.005000';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.006000';
 }
 use strictures 1;
 
-use Carp 'confess';
+use Carp ();
 
 use List::Util ();
 use List::MoreUtils ();
 use List::UtilsBy ();
 
-use Scalar::Util 'blessed', 'reftype';
+use Scalar::Util ();
 
 =pod
 
 =for Pod::Coverage ARRAY_TYPE blessed_or_pkg
+
+=begin comment
+
+This is some nonsense to support autoboxing; if we aren't blessed, we're
+autoboxed, in which case we appear to have no choice but to cheap out and
+return the basic array type:
+
+=end comment
 
 =cut
 
 sub ARRAY_TYPE () { 'List::Objects::WithUtils::Array' }
 my $_required;
 sub blessed_or_pkg {
-  my $pkg; ($pkg = blessed $_[0]) ? return $pkg
+  my $pkg; ($pkg = Scalar::Util::blessed $_[0]) ? return $pkg
     : $_required ? 
       return ARRAY_TYPE
     : eval( 'require ' . ARRAY_TYPE . ';1' ) and $_required++, 
@@ -30,6 +38,14 @@ sub blessed_or_pkg {
 
 
 use Role::Tiny;
+
+=pod
+
+=for Pod::Coverage TO_JSON
+
+=cut
+
+sub TO_JSON { [ @{ $_[0] } ] }
 
 sub new {
   bless [ @_[1 .. $#_] ], $_[0] 
@@ -157,8 +173,8 @@ sub firstidx {
 
 sub mesh {
   for (@_) {
-    confess "Expected ARRAY or compatible obj, got $_"
-      unless (reftype $_ || '') eq 'ARRAY'
+    Carp::confess("Expected ARRAY or compatible obj, got $_")
+      unless (Scalar::Util::reftype($_) || '') eq 'ARRAY'
   }
   blessed_or_pkg($_[0])->new(
     &List::MoreUtils::mesh( @_ )
@@ -289,6 +305,9 @@ objects.
 L<List::Objects::WithUtils::Array> consumes this role (along with
 L<List::Objects::WithUtils::Role::WithJunctions>) to provide B<array()> object
 methods.
+
+In addition to the methods documented below, these objects provide a
+C<TO_JSON> method exporting a plain ARRAY-type reference.
 
 =head2 Basic array methods
 

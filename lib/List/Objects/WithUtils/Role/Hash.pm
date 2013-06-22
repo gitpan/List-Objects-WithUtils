@@ -1,11 +1,11 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '1.005000';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '1.006000';
 }
 use strictures 1;
 
-use Module::Runtime 'require_module';
-use Scalar::Util 'blessed';
+use Module::Runtime ();
+use Scalar::Util ();
 
 =pod
 
@@ -16,7 +16,7 @@ use Scalar::Util 'blessed';
 sub HASH_TYPE () { 'List::Objects::WithUtils::Hash' }
 my $_required;
 sub blessed_or_pkg { 
-  my $pkg; ($pkg = blessed $_[0]) ? return $pkg
+  my $pkg; ($pkg = Scalar::Util::blessed $_[0]) ? return $pkg
     : $_required ? 
       return HASH_TYPE
     : eval( 'require ' . HASH_TYPE . ';1' ) and $_required++,
@@ -25,10 +25,20 @@ sub blessed_or_pkg {
 
 use Role::Tiny;
 
-sub array_type { 'List::Objects::WithUtils::Array' }
+sub array_type       { 'List::Objects::WithUtils::Array' }
+sub inflated_type    { 'List::Objects::WithUtils::Hash::Inflated' }
+sub inflated_rw_type { 'List::Objects::WithUtils::Hash::Inflated::RW' }
+
+=pod
+
+=for Pod::Coverage TO_JSON
+
+=cut
+
+sub TO_JSON { +{ %{ $_[0] } } }
 
 sub new {
-  require_module( $_[0]->array_type );
+  Module::Runtime::require_module( $_[0]->array_type );
   bless +{ @_[1 .. $#_] }, $_[0]
 }
 
@@ -36,6 +46,13 @@ sub clear { %{ $_[0] } = () }
 
 sub copy {
   bless +{ %{ $_[0] } }, blessed_or_pkg($_[0])
+}
+
+sub inflate {
+  my ($self, %params) = @_;
+  my $type = $params{rw} ? 'inflated_rw_type' : 'inflated_type';
+  Module::Runtime::require_module( $self->$type );
+  blessed_or_pkg($self)->$type->new( %$self )
 }
 
 sub defined { CORE::defined $_[0]->{ $_[1] } }
@@ -148,6 +165,9 @@ List::Objects::WithUtils::Role::Hash - Hash manipulation methods
 A L<Role::Tiny> role defining methods for creating and manipulating HASH-type
 objects.
 
+In addition to the methods documented below, these objects provide a
+C<TO_JSON> method exporting a plain HASH-type reference.
+
 =head2 new
 
 Constructs a new HASH-type object.
@@ -158,19 +178,6 @@ Constructs a new HASH-type object.
 
 Returns a raw key/value list.
 
-=head2 array_type
-
-The class name of list/array-type objects that will be constructed from the
-results of list-producing methods.
-
-Defaults to L<List::Objects::WithUtils::Array>.
-
-Subclasses can override C<array_type> to produce different types of array
-objects; the method can also be queried to find out what kind of array object
-will be returned:
-
-  my $type = $hash->array_type;
-
 =head2 clear
 
 Clears the current hash entirely.
@@ -178,10 +185,6 @@ Clears the current hash entirely.
 =head2 copy
 
 Creates a shallow clone of the current object.
-
-=head2 is_empty
-
-Returns boolean true if the hash has no keys.
 
 =head2 defined
 
@@ -213,6 +216,32 @@ Retrieves a key or list of keys from the hash.
 If we're taking a slice (multiple keys were specified), values are returned
 as an L</array_type> object. (See L</sliced> if you'd rather generate a new
 hash.)
+
+=head2 inflate
+
+  my $obj = hash(foo => 'bar', baz => 'quux')->inflate;
+  my $baz = $obj->baz; 
+
+Inflates a simple object providing accessors for a hash.
+
+By default, accessors are read-only; specifying C<rw => 1> allows setting new
+values:
+
+  my $obj = hash(foo => 'bar', baz => 'quux')->inflate(rw => 1);
+  $obj->foo('frobulate');
+
+Returns an L</inflated_type> (or L</inflated_rw_type>) object.
+
+The default objects provide a C<DEFLATE> method returning a
+plain hash; this makes it easy to turn inflated objects back into a C<hash()>
+for modification:
+
+  my $first = hash( foo => 'bar', baz => 'quux' )->inflate;
+  my $second = hash( $first->DEFLATE, frobulate => 1 )->inflate;
+
+=head2 is_empty
+
+Returns boolean true if the hash has no keys.
 
 =head2 keys
 
@@ -253,6 +282,33 @@ Returns an L</array_type> object containing the new values.
 Returns a new hash object built from the specified set of keys.
 
 (See L</get> if you only need the values.)
+
+=head2 array_type
+
+The class name of list/array-type objects that will be constructed from the
+results of list-producing methods.
+
+Defaults to L<List::Objects::WithUtils::Array>.
+
+Subclasses can override C<array_type> to produce different types of array
+objects; the method can also be queried to find out what kind of array object
+will be returned:
+
+  my $type = $hash->array_type;
+
+=head2 inflated_type
+
+The class name that objects are blessed into when calling L</inflate>.
+
+Defaults to L<List::Objects::WithUtils::Hash::Inflated>.
+
+=head2 inflated_rw_type
+
+The class name that objects are blessed into when calling L</inflate> with
+C<rw => 1>.
+
+Defaults to L<List::Objects::WithUtils::Hash::Inflated::RW>, a subclass of
+L<List::Objects::WithUtils::Hash::Inflated>.
 
 =head1 SEE ALSO
 
