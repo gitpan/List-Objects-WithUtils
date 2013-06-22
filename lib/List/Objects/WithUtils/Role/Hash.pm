@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '1.006000';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '1.006001';
 }
 use strictures 1;
 
@@ -51,7 +51,7 @@ sub copy {
 sub inflate {
   my ($self, %params) = @_;
   my $type = $params{rw} ? 'inflated_rw_type' : 'inflated_type';
-  Module::Runtime::require_module( $self->$type );
+  Module::Runtime::require_module( blessed_or_pkg($self)->$type );
   blessed_or_pkg($self)->$type->new( %$self )
 }
 
