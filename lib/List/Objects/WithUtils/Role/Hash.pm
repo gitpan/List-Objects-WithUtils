@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '1.006001';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '1.007000';
 }
 use strictures 1;
 
@@ -51,8 +51,9 @@ sub copy {
 sub inflate {
   my ($self, %params) = @_;
   my $type = $params{rw} ? 'inflated_rw_type' : 'inflated_type';
-  Module::Runtime::require_module( blessed_or_pkg($self)->$type );
-  blessed_or_pkg($self)->$type->new( %$self )
+  my $pkg = blessed_or_pkg($self);
+  Module::Runtime::require_module( $pkg->$type );
+  $pkg->$type->new( %$self )
 }
 
 sub defined { CORE::defined $_[0]->{ $_[1] } }
@@ -63,7 +64,7 @@ sub is_empty { keys %{ $_[0] } ? 0 : 1 }
 sub get {
   if (@_ > 2) {
     return blessed_or_pkg($_[0])->array_type->new(
-      @{ $_[0] }{@_}
+      @{ $_[0] }{ @_[1 .. $#_] }
     )
   }
   $_[0]->{ $_[1] }
@@ -86,9 +87,7 @@ sub set {
 
   @{$self}{ @_[@keysidx] } = @_[@valsidx];
 
-  blessed_or_pkg($self)->array_type->new(
-    @{$self}{ @_[@keysidx] }
-  )
+  $self
 }
 
 sub delete {
@@ -118,10 +117,7 @@ sub kv {
   )
 }
 
-sub export {
-  my ($self) = @_;
-  %$self
-}
+sub export { %{ $_[0] } }
 
 
 1;
@@ -273,7 +269,8 @@ each of which is a two-element ARRAY.
 
 Sets keys in the hash.
 
-Returns an L</array_type> object containing the new values.
+As of version 1.007, returns the current hash object.
+The return value of prior versions is unreliable.
 
 =head2 sliced
 

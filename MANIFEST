@@ -8,6 +8,8 @@ README
 README.mkdn
 dist.ini
 examples/blog-post-list-objects.mkdn
+examples/cheap_accessors.pl
+examples/lotto.pl
 lib/List/Objects/WithUtils.pm
 lib/List/Objects/WithUtils/Array.pm
 lib/List/Objects/WithUtils/Array/Immutable.pm

@@ -1,10 +1,10 @@
 {
-   "abstract" : "Object interfaces to lists with useful methods",
+   "abstract" : "List objects with useful methods",
    "author" : [
       "Jon Portnoy <avenj@cobaltirc.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -56,6 +56,6 @@
          "web" : "git://github.com/avenj/list-objects-withutils"
       }
    },
-   "version" : "1.006001"
+   "version" : "1.007000"
 }
 

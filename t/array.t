@@ -119,12 +119,22 @@ is_deeply( [ $arr->all ], [qw/a b c/], 'array reset' );
 my $upper = $arr->map(sub { uc $_[0] });
 is_deeply( [ $upper->all ], [qw/A B C/], 'map() ok' );
 is_deeply( [ $arr->all ], [qw/a b c/], 'orig after map() ok' );
+is_deeply(
+  [ array(qw/ a b c /)->map(sub { uc $_ })->all ],
+  [ qw/ A B C / ],
+  'map() on topicalizer ok'
+);
 
 ## grep()
 $arr->push('b');
 my $found = $arr->grep(sub { $_[0] eq 'b' });
 is_deeply( [ $found->all ], [qw/b b/], 'grep() ok' );
 is_deeply( [ $arr->all ], [qw/a b c b/], 'orig after grep() ok' );
+is_deeply(
+  [ array(qw/ a b c /)->grep(sub { /^b/ })->all ],
+  [ 'b' ],
+  'grep() on topicalizer ok'
+);
 
 undef $upper;
 undef $found;
@@ -383,6 +393,48 @@ my ($evens, $odds) = array( 1 .. 6 )->part(sub { $_[0] & 1 })->all;
 is_deeply( [ $evens->all ], [ 2,4,6 ], 'part() with args picked evens ok' );
 is_deeply( [ $odds->all ], [ 1,3,5 ], 'part() with args picked odds ok' );
 
+## bisect()
+my $pair = array( 1 .. 10 )->bisect(sub { $_[0] >= 5 });
+isa_ok( $pair, 'List::Objects::WithUtils::Array', 
+  'bisect() array obj'
+);
+
+ok( $pair->count == 2, 'bisect() returned two items' );
+isa_ok( $pair->get(0), 'List::Objects::WithUtils::Array',
+  'bisect() item 0 obj'
+);
+isa_ok( $pair->get(1), 'List::Objects::WithUtils::Array',
+  'bisect() item 1 obj'
+);
+
+is_deeply(
+  [ $pair->get(0)->all ],
+  [ 5 .. 10 ],
+  'bisect() item 0 ok'
+);
+is_deeply(
+  [ $pair->get(1)->all ],
+  [ 1 .. 4 ],
+  'bisect() item 1 ok'
+);
+
+ok( array->bisect(sub {})->count == 2, 'bisect() always returns two arrays' );
+
+
+## flatten_all()
+is_deeply(
+  [ array( 1, 2, [ 3, 4, [ 5, 6 ] ] )->flatten_all ],
+  [ 1, 2, 3, 4, 5, 6 ],
+  'flatten(level => 0) ok'
+);
+
+is_deeply(
+  [ array( 1, 2, array(3, 4, array(5, 6) ) )->flatten_all ],
+  [ 1, 2, 3, 4, 5, 6 ],
+  'flatten against objs ok'
+);
+
+## subclasses
 {  package My::List;
    use strict; use warnings FATAL => 'all';
 

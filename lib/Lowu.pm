@@ -1,6 +1,6 @@
 package Lowu;
 {
-  $Lowu::VERSION = '1.006001';
+  $Lowu::VERSION = '1.007000';
 }
 use strictures 1;
 
@@ -28,7 +28,7 @@ unless caller;
 
 =head1 NAME
 
-Lowu - Shortcut for importing list object goodness
+Lowu - Shortcut for importing all of List::Objects::WithUtils
 
 =head1 SYNOPSIS
 
