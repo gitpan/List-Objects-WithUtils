@@ -1,6 +1,6 @@
 package Lowu;
 {
-  $Lowu::VERSION = '1.007000';
+  $Lowu::VERSION = '1.008000';
 }
 use strictures 1;
 

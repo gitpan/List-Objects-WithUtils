@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.007000';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.008000';
 }
 use strictures 1;
 
@@ -18,6 +18,7 @@ use Scalar::Util ();
 
 =begin comment
 
+Regarding blessed_or_pkg():
 This is some nonsense to support autoboxing; if we aren't blessed, we're
 autoboxed, in which case we appear to have no choice but to cheap out and
 return the basic array type:
@@ -27,19 +28,26 @@ return the basic array type:
 =cut
 
 sub ARRAY_TYPE () { 'List::Objects::WithUtils::Array' }
-my $_required;
 sub blessed_or_pkg {
-  my $pkg; ($pkg = Scalar::Util::blessed $_[0]) ? return $pkg
-    : $_required ? 
-      return ARRAY_TYPE
-    : eval( 'require ' . ARRAY_TYPE . ';1' ) and $_required++, 
-      return ARRAY_TYPE
+  my $pkg;
+  ($pkg = Scalar::Util::blessed $_[0]) ? return $pkg
+    : return Module::Runtime::use_module(ARRAY_TYPE)
+}
+
+
+sub __flatten_all {
+  ref $_[0] && Scalar::Util::reftype($_[0]) eq 'ARRAY' ?
+    map {; __flatten_all($_) } @{ $_[0] }
+    : $_[0]
 }
 
 sub __flatten {
-  ref $_[0] && Scalar::Util::reftype $_[0] eq 'ARRAY' ?
-    map {; __flatten($_) } @{ $_[0] }
-    : $_[0]
+  my $depth = shift;
+  CORE::map {
+    ref && Scalar::Util::reftype($_) eq 'ARRAY' ?
+      $depth > 0 ? __flatten( $depth - 1, @$_ ) : $_
+      : $_
+  } @_
 }
 
 
@@ -285,7 +293,14 @@ sub uniq_by {
 }
 
 sub flatten_all {
-  CORE::map {;  __flatten($_)  } @{ $_[0] }
+  CORE::map {;  __flatten_all($_)  } @{ $_[0] }
+}
+
+sub flatten {
+  __flatten( 
+    ( defined $_[1] ? $_[1] : 0 ),
+    @{ $_[0] } 
+  )
 }
 
 
@@ -431,6 +446,31 @@ true, the second contains the remaining items.
 =head3 export
 
 Same as L</all>; included for consistency with hash-type objects.
+
+=head3 flatten
+
+Flatten array objects to plain lists, possibly recursively.
+
+C<flatten> without arguments is the same as L</all>:
+
+  my @flat = array( 1, 2, [ 3, 4 ] )->flatten;
+  #  @flat = ( 1, 2, [ 3, 4 ] );
+
+If a depth is specified, sub-arrays are recursively flattened until the
+specified depth is reached: 
+
+  my @flat = array( 1, 2, [ 3, 4 ] )->flatten(1);
+  #  @flat = ( 1, 2, 3, 4 );
+
+  my @flat = array( 1, 2, [ 3, 4, [ 5, 6 ] ] )->flatten(1);
+  #  @flat = ( 1, 2, 3, 4, [ 5, 6 ] );
+
+This works with both ARRAY-type references and array objects:
+
+  my @flat = array( 1, 2, [ 3, 4, array( 5, 6 ) ] )->flatten(2);
+  #  @flat = ( 1, 2, 3, 4, 5, 6 );
+
+Also see L</flatten_all>.
 
 =head3 flatten_all
 

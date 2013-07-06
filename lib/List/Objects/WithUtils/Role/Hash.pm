@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '1.007000';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '1.008000';
 }
 use strictures 1;
 
@@ -14,13 +14,10 @@ use Scalar::Util ();
 =cut
 
 sub HASH_TYPE () { 'List::Objects::WithUtils::Hash' }
-my $_required;
 sub blessed_or_pkg { 
-  my $pkg; ($pkg = Scalar::Util::blessed $_[0]) ? return $pkg
-    : $_required ? 
-      return HASH_TYPE
-    : eval( 'require ' . HASH_TYPE . ';1' ) and $_required++,
-      return HASH_TYPE
+  my $pkg;
+  ($pkg = Scalar::Util::blessed $_[0]) ? return $pkg
+   : return Module::Runtime::use_module(HASH_TYPE)
 }
 
 use Role::Tiny;
