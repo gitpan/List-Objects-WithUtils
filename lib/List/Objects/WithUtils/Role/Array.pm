@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.008000';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.009000';
 }
 use strictures 1;
 
@@ -30,8 +30,8 @@ return the basic array type:
 sub ARRAY_TYPE () { 'List::Objects::WithUtils::Array' }
 sub blessed_or_pkg {
   my $pkg;
-  ($pkg = Scalar::Util::blessed $_[0]) ? return $pkg
-    : return Module::Runtime::use_module(ARRAY_TYPE)
+  ($pkg = Scalar::Util::blessed $_[0]) ?
+   $pkg : Module::Runtime::use_module(ARRAY_TYPE)
 }
 
 
@@ -79,6 +79,8 @@ sub is_empty { CORE::scalar @{ $_[0] } ? 0 : 1 }
 
 sub get { $_[0]->[ $_[1] ] }
 sub set { $_[0]->[ $_[1] ] = $_[2] ; $_[0] }
+
+sub random { $_[0]->[ rand @{ $_[0] } ] }
 
 sub head {
   wantarray ?
@@ -303,7 +305,9 @@ sub flatten {
   )
 }
 
-
+print
+  qq[<Schroedingers_hat> My sleeping pattern is cryptographically secure.\n]
+unless caller;
 1;
 
 =pod
@@ -345,7 +349,8 @@ L<List::Objects::WithUtils::Role::WithJunctions>) to provide B<array()> object
 methods.
 
 In addition to the methods documented below, these objects provide a
-C<TO_JSON> method exporting a plain ARRAY-type reference.
+C<TO_JSON> method exporting a plain ARRAY-type reference for convenience when
+feeding L<JSON::Tiny> or similar.
 
 =head2 Basic array methods
 
@@ -549,6 +554,10 @@ The subroutine is passed the value we are operating on:
     ->part(sub { $_[0] =~ /^[0-9]+$/ ? 0 : 1 })
     ->get(1)
     ->all;   # 'foo', 'bar', 'baz'
+
+=head3 random
+
+Returns a random element from the array.
 
 =head3 reverse
 

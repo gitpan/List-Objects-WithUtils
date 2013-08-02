@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '1.008000';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '1.009000';
 }
 use strictures 1;
 
@@ -16,8 +16,8 @@ use Scalar::Util ();
 sub HASH_TYPE () { 'List::Objects::WithUtils::Hash' }
 sub blessed_or_pkg { 
   my $pkg;
-  ($pkg = Scalar::Util::blessed $_[0]) ? return $pkg
-   : return Module::Runtime::use_module(HASH_TYPE)
+  ($pkg = Scalar::Util::blessed $_[0]) ?
+    $pkg : Module::Runtime::use_module(HASH_TYPE)
 }
 
 use Role::Tiny;
@@ -147,7 +147,11 @@ List::Objects::WithUtils::Role::Hash - Hash manipulation methods
 
   for my $pair ( $hash->kv->all ) {
     my ($key, $val) = @$pair;
+    ...
   }
+
+  my $obj = $hash->inflate;
+  my $foo = $obj->foo;
 
   ## As a Role ->
   use Role::Tiny::With;
@@ -159,7 +163,8 @@ A L<Role::Tiny> role defining methods for creating and manipulating HASH-type
 objects.
 
 In addition to the methods documented below, these objects provide a
-C<TO_JSON> method exporting a plain HASH-type reference.
+C<TO_JSON> method exporting a plain HASH-type reference for convenience when
+feeding L<JSON::Tiny> or similar.
 
 =head2 new
 
@@ -271,7 +276,7 @@ The return value of prior versions is unreliable.
 
 =head2 sliced
 
-  my $newhash = $hash->slice(@keys);
+  my $newhash = $hash->sliced(@keys);
 
 Returns a new hash object built from the specified set of keys.
 
@@ -279,8 +284,8 @@ Returns a new hash object built from the specified set of keys.
 
 =head2 array_type
 
-The class name of list/array-type objects that will be constructed from the
-results of list-producing methods.
+The class name of array-type objects that will be used to contain the results
+of methods returning a list.
 
 Defaults to L<List::Objects::WithUtils::Array>.
 
