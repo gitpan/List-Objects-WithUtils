@@ -27,6 +27,7 @@ t/00_loadable.t
 t/array.t
 t/hash.t
 t/immutable.t
+t/release-cpan-changes.t
 t/release-dist-manifest.t
 t/release-no-tabs.t
 t/release-pod-coverage.t

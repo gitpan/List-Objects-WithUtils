@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::WithJunctions;
 {
-  $List::Objects::WithUtils::Role::WithJunctions::VERSION = '1.009001';
+  $List::Objects::WithUtils::Role::WithJunctions::VERSION = '1.009002';
 }
 use strictures 1;
 use Role::Tiny;
