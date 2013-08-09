@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Hash::Inflated::RW;
 {
-  $List::Objects::WithUtils::Hash::Inflated::RW::VERSION = '1.009000';
+  $List::Objects::WithUtils::Hash::Inflated::RW::VERSION = '1.009001';
 }
 use strictures 1;
 

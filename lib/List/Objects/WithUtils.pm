@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '1.009000';
+  $List::Objects::WithUtils::VERSION = '1.009001';
 }
 use Carp;
 use strictures 1;
@@ -126,12 +126,12 @@ List::Objects::WithUtils - List objects with useful methods
     +{ name => 'suzy', acct => 3 },
   )->sort_by(sub { $_->{name} });
 
-  # Regular array objects are mutable:
+  # array() objects are mutable:
   my $mutable = array(qw/ foo bar baz /);
   $mutable->insert(1, 'quux');
   $mutable->delete(2);
 
-  # ... but array objects can be immutable:
+  # ... or use immarray() immutable arrays:
   my $static = immarray( qw/ foo bar baz / );
   $static->set(0, 'quux');  # dies
   $static->[0] = 'quux';    # dies
@@ -160,7 +160,7 @@ List::Objects::WithUtils - List objects with useful methods
   my $slice = $hash->sliced('foo', 'pie');
 
   # Chained method examples; methods that return multiple values
-  # typically return array-type objects:
+  # typically return new array-type objects:
   my @match_keys = $hash->keys->grep(sub { m/foo/ })->all;
   my @match_vals = $hash->values->grep(sub { m/bar/ })->all;
   
