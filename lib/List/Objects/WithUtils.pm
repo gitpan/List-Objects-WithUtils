@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '1.009003';
+  $List::Objects::WithUtils::VERSION = '1.009004';
 }
 use Carp;
 use strictures 1;
@@ -43,6 +43,8 @@ sub import {
       List::Objects::WithUtils::Autobox::import($class);
       next
     }
+
+    carp "Unknown import parameter '$function'"
   }
 
   $pkg = caller unless defined $pkg;
@@ -76,8 +78,8 @@ List::Objects::WithUtils - List objects with useful methods
 
 =head1 SYNOPSIS
 
-  ## A small sampling; consult the description, below, for links to
-  ## extended documentation:
+  ## A small sample; consult the description, below, for links to
+  ## extended documentation
 
   # Import selectively:
   use List::Objects::WithUtils 'array';
@@ -91,10 +93,10 @@ List::Objects::WithUtils - List objects with useful methods
   use Lowu;
 
   # Some simple chained array operations, eventually returning a plain list
-  # List returning methods return new list objects:
+  # Most methods returning lists return new objects; chaining is easy:
   array(qw/ aa Ab bb Bc bc /)
     ->grep(sub { /^b/i })
-    ->map(sub { uc })
+    ->map(sub  { uc })
     ->uniq
     ->all;   # ( 'BB', 'BC' )
 
@@ -177,7 +179,11 @@ List::Objects::WithUtils - List objects with useful methods
     ...
   }
 
-  # Autoboxed native data types:
+  # Hashes can be inflated to objects:
+  my $obj    = $hash->inflate;
+  my $snacks = $obj->snacks;
+
+  # Native list types can be autoboxed:
   use List::Objects::WithUtils 'autobox';
   my $foo = [ qw/foo baz bar foo quux/ ]->uniq->sort;
   my $bar = +{ a => 1, b => 2, c => 3 }->values->sort;
@@ -249,6 +255,8 @@ L<List::Objects::WithUtils::Autobox> for details on autoboxing.
 
 The L<Lowu> module for a convenient importer shortcut.
 
+L<MoopsX::ListObjects> for integration with L<Moops> class-building sugar.
+
 =head2 Subclassing
 
 The importer for this package is somewhat flexible; a subclass can override
@@ -260,10 +268,12 @@ C<import()> a HASH:
   use parent 'List::Objects::WithUtils';
   sub import {
     my ($class, @params) = @_;
-    $class->SUPER::import({
+    $class->SUPER::import(
+      +{
         import => [ 'autobox', 'array', 'hash' ], 
         to     => scalar(caller)
-    })
+      } 
+    )
   }
 
 Functionality is mostly defined by Roles.

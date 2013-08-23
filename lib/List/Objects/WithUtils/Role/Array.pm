@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.009003';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.009004';
 }
 use strictures 1;
 
@@ -38,6 +38,7 @@ sub blessed_or_pkg {
 sub __flatten_all {
   ref $_[0] eq 'ARRAY' 
   || Scalar::Util::blessed($_[0]) 
+     # 5.8 doesn't have ->DOES()
      && $_[0]->can('does')
      && $_[0]->does('List::Objects::WithUtils::Role::Array') ?
      map {; __flatten_all($_) } @{ $_[0] }
