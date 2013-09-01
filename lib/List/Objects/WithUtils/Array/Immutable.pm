@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Array::Immutable;
 {
-  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.010000';
+  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.010001';
 }
 use strictures 1;
 require Carp;

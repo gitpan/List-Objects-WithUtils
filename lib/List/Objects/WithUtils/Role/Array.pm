@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.010000';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.010001';
 }
 use strictures 1;
 
@@ -77,8 +77,10 @@ sub _try_coerce {
   CORE::map {;
     my $coerced;
     $type->check($_) ? $_
-    : $type->assert_valid( ($coerced = $type->coerce($_)) ) ? $coerced
-    : Carp::confess "I should be unreachable!"
+    : $type->assert_valid( 
+        $type->has_coercion ? ($coerced = $type->coerce($_)) : $_
+      ) ? $coerced
+      : Carp::confess "I should be unreachable!"
   } @vals
 }
 

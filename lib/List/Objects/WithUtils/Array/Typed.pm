@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Array::Typed;
 {
-  $List::Objects::WithUtils::Array::Typed::VERSION = '1.010000';
+  $List::Objects::WithUtils::Array::Typed::VERSION = '1.010001';
 }
 use strictures 1;
 
@@ -29,7 +29,7 @@ sub new {
     $type = shift;
   }
 
-  Carp::confess "Expected a Type::Tiny type but got $type"
+  Carp::confess "Expected a Type::Tiny type but got '$type'"
     unless Scalar::Util::blessed($type)
     && $type->isa('Type::Tiny');
 
