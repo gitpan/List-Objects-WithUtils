@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use 5.008009;
+use 5.006;
 
 use ExtUtils::MakeMaker 6.30;
 
@@ -23,7 +23,7 @@ my %WriteMakefileArgs = (
     "Carp" => 0,
     "Exporter" => 0,
     "List::MoreUtils" => "0.33",
-    "List::Util" => 0,
+    "List::Util" => "1.18",
     "List::UtilsBy" => "0.09",
     "Module::Runtime" => "0.013",
     "Role::Tiny" => 1,
@@ -35,7 +35,7 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "Test::More" => "0.88"
   },
-  "VERSION" => "1.009004",
+  "VERSION" => "1.009005",
   "test" => {
     "TESTS" => "t/*.t t/t_autoboxed/*.t t/t_junction/*.t"
   }

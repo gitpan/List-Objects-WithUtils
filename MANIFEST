@@ -27,6 +27,7 @@ t/00_loadable.t
 t/array.t
 t/hash.t
 t/immutable.t
+t/json.t
 t/release-cpan-changes.t
 t/release-dist-manifest.t
 t/release-no-tabs.t
@@ -40,4 +41,3 @@ t/t_autoboxed/hash.t
 t/t_junction/all.t
 t/t_junction/any.t
 t/t_junction/subclasses.t
-xt/json.t

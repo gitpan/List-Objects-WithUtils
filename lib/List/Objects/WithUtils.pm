@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '1.009004';
+  $List::Objects::WithUtils::VERSION = '1.009005';
 }
 use Carp;
 use strictures 1;
@@ -181,7 +181,7 @@ List::Objects::WithUtils - List objects with useful methods
 
   # Hashes can be inflated to objects:
   my $obj    = $hash->inflate;
-  my $snacks = $obj->snacks;
+  $snacks = $obj->snacks;
 
   # Native list types can be autoboxed:
   use List::Objects::WithUtils 'autobox';
