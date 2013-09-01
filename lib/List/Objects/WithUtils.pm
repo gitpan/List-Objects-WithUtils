@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '1.009005';
+  $List::Objects::WithUtils::VERSION = '1.010000';
 }
 use Carp;
 use strictures 1;
@@ -20,7 +20,7 @@ sub import {
   if (!@funcs) {
     @funcs = @DefaultImport
   } elsif (grep {; lc $_ eq 'all' || lc $_ eq ':all' } @funcs) {
-    @funcs = ( @DefaultImport, 'autobox' )
+    @funcs = ( @DefaultImport, 'autobox', 'array_of' )
   }
 
   my @mods;
@@ -35,6 +35,10 @@ sub import {
     }
     if ($function eq 'immarray') {
       push @mods, 'List::Objects::WithUtils::Array::Immutable';
+      next
+    }
+    if ($function eq 'array_of') {
+      push @mods, 'List::Objects::WithUtils::Array::Typed';
       next
     }
     if ($function eq 'autobox') {
@@ -179,8 +183,13 @@ List::Objects::WithUtils - List objects with useful methods
     ...
   }
 
+  # Type-checking arrays:
+  use List::Objects::WithUtils 'array_of';
+  use Types::Standard -all;
+  my $ints = array_of( Int, 1 .. 10 );
+
   # Hashes can be inflated to objects:
-  my $obj    = $hash->inflate;
+  my $obj = $hash->inflate;
   $snacks = $obj->snacks;
 
   # Native list types can be autoboxed:
@@ -221,6 +230,9 @@ providing methods for native ARRAY and HASH types.
 A bare import list (C<use List::Objects::WithUtils;>) will import the
 C<array>, C<immarray>, and C<hash> functions.
 
+Importing B<array_of> gives you L<Type::Tiny>-compatible type-checking array
+objects; see L<List::Objects::WithUtils::Array::Typed>.
+
 Importing B<all> or B<:all> will import all of the above and additionally turn
 B<autobox> on, as will the shortcut C<use Lowu;> (as of 1.003).
 
@@ -251,9 +263,14 @@ methods.
 L<List::Objects::WithUtils::Array::Immutable> for more on C<immarray()>
 immutable arrays.
 
+L<List::Objects::WithUtils::Array::Typed> for more on C<array_of()>
+type-checking arrays.
+
 L<List::Objects::WithUtils::Autobox> for details on autoboxing.
 
 The L<Lowu> module for a convenient importer shortcut.
+
+L<List::Objects::Types> for relevant L<Type::Tiny> types.
 
 L<MoopsX::ListObjects> for integration with L<Moops> class-building sugar.
 

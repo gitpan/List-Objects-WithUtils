@@ -13,6 +13,8 @@ meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
 name: List-Objects-WithUtils
+recommends:
+  Type::Tiny: 0.022
 requires:
   Carp: 0
   Exporter: 0
@@ -28,4 +30,4 @@ requires:
   strictures: 1
 resources:
   repository: git://github.com/avenj/list-objects-withutils.git
-version: 1.009005
+version: 1.010000

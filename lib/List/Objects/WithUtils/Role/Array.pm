@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.009005';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.010000';
 }
 use strictures 1;
 
@@ -29,9 +29,11 @@ return the basic array type:
 
 sub ARRAY_TYPE () { 'List::Objects::WithUtils::Array' }
 sub blessed_or_pkg {
+  my ($item) = @_;
   my $pkg;
-  ($pkg = Scalar::Util::blessed $_[0]) ?
-   $pkg : Module::Runtime::use_module(ARRAY_TYPE)
+  ($pkg = Scalar::Util::blessed $item) ?
+    wantarray ? ($item, $pkg) : $item
+    : Module::Runtime::use_module(ARRAY_TYPE)
 }
 
 
@@ -68,12 +70,36 @@ use Role::Tiny;
 
 sub TO_JSON { [ @{ $_[0] } ] }
 
+sub _try_coerce {
+  my (undef, $type, @vals) = @_;
+  Carp::confess "Expected a Type::Tiny type but got $type"
+    unless Scalar::Util::blessed $type;
+  CORE::map {;
+    my $coerced;
+    $type->check($_) ? $_
+    : $type->assert_valid( ($coerced = $type->coerce($_)) ) ? $coerced
+    : Carp::confess "I should be unreachable!"
+  } @vals
+}
+
+
 sub new {
-  bless [ @_[1 .. $#_] ], $_[0] 
+  if (my $blessed = Scalar::Util::blessed $_[0]) {
+    return bless [ @_[1 .. $#_] ], $blessed
+  }
+  bless [ @_[1 .. $#_] ], $_[0]
 }
 
 sub copy {
-  bless [ @{ $_[0] } ], blessed_or_pkg($_[0])
+  my ($self) = @_;
+  blessed_or_pkg($self)->new(@$self);
+}
+
+sub validated {
+  my ($self, $type) = @_;
+  blessed_or_pkg($_[0])->new(
+    CORE::map {; $self->_try_coerce($type, $_) } @$self
+  )
 }
 
 sub all { @{ $_[0] } }
@@ -203,23 +229,13 @@ sub firstidx {
 }
 
 sub mesh {
-  for (@_) {
-    Carp::confess("Expected ARRAY or compatible obj, got $_")
-      unless (Scalar::Util::reftype($_) || '') eq 'ARRAY'
-  }
+  my $max_idx = -1;
+  for (@_) { $max_idx = $#$_ if $max_idx < $#$_ }
   blessed_or_pkg($_[0])->new(
-    &List::MoreUtils::mesh( @_ )
+    CORE::map {;
+      my $idx = $_; map {; $_->[$idx] } @_
+    } 0 .. $max_idx
   )
-# In case upstream ever changes, here's a pure-perl impl:
-#  my $max_idx = -1;
-#  for my $item (@_) {
-#    $max_idx = $#$item if $max_idx < $#$item
-#  }
-#  blessed_or_pkg($_[0])->new(
-#    map {;
-#      my $idx = $_; map {; $_->[$idx] } @_
-#    } 0 .. $max_idx
-#  )
 }
 
 sub natatime {
@@ -249,6 +265,24 @@ sub bisect {
   $cls->new(
     map {; $cls->new(@$_) } @parts
   )
+}
+
+
+sub tuples {
+  # FIXME add optional Type::Tiny typecheck?
+  my ($self, $size, $type) = @_;
+  $size = 2 unless defined $size;
+  Carp::confess "Expected a positive integer size but got $size"
+    if $size < 0;
+  my $itr = List::MoreUtils::natatime($size, @$self);
+  my $new = blessed_or_pkg($self)->new;
+  while (my @nxt = $itr->()) {
+    if (defined $type) {
+      @nxt = CORE::map {; $self->_try_coerce($type, $_) } @nxt
+    }
+    $new->push( [ (@nxt == 2 ? @nxt : (@nxt, undef) ) ] )
+  }
+  $new
 }
 
 sub reduce {
@@ -445,6 +479,21 @@ consisting of the items returned from the splice.
 
 The existing array is modified in-place.
 
+=head3 validated
+
+  use Types::Standard -all;
+  my $valid = array(qw/foo bar baz/)->validated(Str);
+
+Accepts a L<Type::Tiny> type, against which each element of the current array
+will be checked before being added to the new array. 
+
+If the element fails the type check but can be coerced, the coerced value will
+be added to the new array.
+
+Dies with a stack trace if the value fails type checks and can't be coerced.
+
+See: L<Types::Standard>, L<List::Objects::Types>
+
 =head2 Methods that retrieve items
 
 =head3 all
@@ -593,6 +642,30 @@ Returns a new array object containing the shuffled list.
 
 Returns a new array object consisting of the elements retrived 
 from the specified indexes.
+
+=head3 tuples
+
+  my $tuples = array(1 .. 7)->tuples(2);
+  # Returns:
+  #  array(
+  #    [ 1, 2 ], 
+  #    [ 3, 4 ],
+  #    [ 5, 6 ],
+  #    [ 7, undef ],
+  #  )
+
+Simple sugar for L</natatime>; returns a new array object consisting of tuples
+(unblessed ARRAY references) of the specified size (defaults to 2).
+
+C<tuples> accepts L<Type::Tiny> types as an optional second parameter; if
+specified, items in tuples are checked against the type and a coercion is
+attempted if the initial type-check fails; a stack-trace is thrown if a value
+in a tuple cannot be made to validate:
+
+  use Types::Standard -all;
+  my $tuples = array(1 .. 7)->tuples(2, Int);
+
+See: L<Types::Standard>, L<List::Objects::Types>
 
 =head2 Methods that find items
 
@@ -753,6 +826,10 @@ L<List::Objects::WithUtils>
 L<List::Objects::WithUtils::Array>
 
 L<List::Objects::WithUtils::Role::WithJunctions>
+
+L<List::Objects::WithUtils::Array::Immutable>
+
+L<List::Objects::WithUtils::Array::Typed>
 
 L<Data::Perl>
 

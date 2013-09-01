@@ -103,8 +103,13 @@ SYNOPSIS
         ...
       }
 
+      # Type-checking arrays:
+      use List::Objects::WithUtils 'array_of';
+      use Types::Standard -all;
+      my $ints = array_of( Int, 1 .. 10 );
+
       # Hashes can be inflated to objects:
-      my $obj    = $hash->inflate;
+      my $obj = $hash->inflate;
       $snacks = $obj->snacks;
 
       # Native list types can be autoboxed:
@@ -143,6 +148,9 @@ DESCRIPTION
     A bare import list ("use List::Objects::WithUtils;") will import the
     "array", "immarray", and "hash" functions.
 
+    Importing array_of gives you Type::Tiny-compatible type-checking array
+    objects; see List::Objects::WithUtils::Array::Typed.
+
     Importing all or :all will import all of the above and additionally turn
     autobox on, as will the shortcut "use Lowu;" (as of 1.003).
 
@@ -173,9 +181,14 @@ SEE ALSO
     List::Objects::WithUtils::Array::Immutable for more on "immarray()"
     immutable arrays.
 
+    List::Objects::WithUtils::Array::Typed for more on "array_of()"
+    type-checking arrays.
+
     List::Objects::WithUtils::Autobox for details on autoboxing.
 
     The Lowu module for a convenient importer shortcut.
+
+    List::Objects::Types for relevant Type::Tiny types.
 
     MoopsX::ListObjects for integration with Moops class-building sugar.
 

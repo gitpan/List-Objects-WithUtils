@@ -20,6 +20,7 @@ my @modules = qw(
   Role::Tiny
   Scalar::Util
   Test::More
+  Type::Tiny
   autobox
   parent
   perl

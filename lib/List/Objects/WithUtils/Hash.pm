@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Hash;
 {
-  $List::Objects::WithUtils::Hash::VERSION = '1.009005';
+  $List::Objects::WithUtils::Hash::VERSION = '1.010000';
 }
 use strictures 1;
 

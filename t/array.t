@@ -363,7 +363,7 @@ undef @a_one; undef @a_two;
 undef $mesh_multi;
 
 eval {; array( 'foo' )->mesh( 'bar' ) };
-ok( $@ =~ /Expected ARRAY/, 'mesh with bad args dies' )
+ok $@ =~ /ARRAY/, 'mesh with bad args dies'
   or diag explain $@;
 
 
@@ -434,6 +434,16 @@ is_deeply(
 
 ok( array->bisect(sub {})->count == 2, 'bisect() always returns two arrays' );
 
+
+## tuples()
+my $tuples = array( 1 .. 7 )->tuples(2);
+is_deeply(
+  [ $tuples->all ],
+  [
+    [ 1, 2 ], [ 3, 4 ], [ 5, 6 ], [ 7, undef ]
+  ],
+  'tuples() ok'
+);
 
 my $deep = array( 1, 2, [ 3, 4, [ 5, 6 ], 7 ] );
 ## flatten_all()

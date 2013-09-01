@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Array::Immutable;
 {
-  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.009005';
+  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.010000';
 }
 use strictures 1;
 require Carp;
@@ -14,8 +14,8 @@ sub immarray { __PACKAGE__->new(@_) }
 
 
 sub new {
-  my $self = [ @_[1 .. $#_] ];
-  bless $self, $_[0];
+  my $class = shift;
+  my $self = $class->SUPER::new( @_ );
 
   &Internals::SvREADONLY($self, 1);
   Internals::SvREADONLY($_, 1) for @$self;
