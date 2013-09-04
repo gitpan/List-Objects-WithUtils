@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Array::Typed;
 {
-  $List::Objects::WithUtils::Array::Typed::VERSION = '1.010001';
+  $List::Objects::WithUtils::Array::Typed::VERSION = '1.010002';
 }
 use strictures 1;
 
@@ -17,6 +17,9 @@ use overload
   '@{}'    => sub { $_[0]->{array} },
   fallback => 1;
 
+sub type {
+  $_[0]->{type}
+}
 
 sub new {
   my $class = shift;
@@ -33,9 +36,7 @@ sub new {
     unless Scalar::Util::blessed($type)
     && $type->isa('Type::Tiny');
 
-  my $self = +{
-    type  => $type,
-  };
+  my $self = +{ type => $type };
   bless $self, $class;
 
   $self->{array} = [ map {; $self->_try_coerce($type, $_) } @_ ];
@@ -46,25 +47,25 @@ sub new {
 sub push {
   my $self = shift;
   $self->SUPER::push( 
-    map {; $self->_try_coerce($self->{type}, $_) } @_
+    map {; $self->_try_coerce($self->type, $_) } @_
   )
 }
 
 sub unshift {
   my $self = shift;
   $self->SUPER::unshift(
-    map {; $self->_try_coerce($self->{type}, $_) } @_
+    map {; $self->_try_coerce($self->type, $_) } @_
   )
 }
 
 sub set {
   my $self = shift;
-  $self->SUPER::set( $_[0], $self->_try_coerce($self->{type}, $_[1]) )
+  $self->SUPER::set( $_[0], $self->_try_coerce($self->type, $_[1]) )
 }
 
 sub insert {
   my $self = shift;
-  $self->SUPER::insert( $_[0], $self->_try_coerce($self->{type}, $_[1]) )
+  $self->SUPER::insert( $_[0], $self->_try_coerce($self->type, $_[1]) )
 }
 
 sub splice {
@@ -72,7 +73,7 @@ sub splice {
   $self->SUPER::splice(
     $one, $two,
     ( @_ ? 
-      map {; $self->_try_coerce($self->{type}, $_) } @_
+      map {; $self->_try_coerce($self->type, $_) } @_
       : ()
     ),
   )
@@ -101,10 +102,11 @@ List::Objects::WithUtils::Array::Typed - Type-checking array objects
   use List::Objects::Types -all;
 
   my $arr = array_of( Int() => 1 .. 10 );
-  $arr->push('foo');  # dies
+  $arr->push('foo');    # dies, failed type check
+  $arr->push(11 .. 15); # ok
 
   my $arr_of_arrs = array_of( ArrayObj );
-  $arr_of_arrs->push([], []);     # coerces to ArrayObj
+  $arr_of_arrs->push([], []); # ok, coerces to ArrayObj
 
 =head1 DESCRIPTION
 
@@ -125,6 +127,13 @@ attempted.
 Values that cannot be coerced will throw an exception.
 
 Also see L<Types::Standard>, L<List::Objects::Types>
+
+It's worth noting that this comes with the obvious type-checking performance
+hit, plus some extra overhead in proxying array operations.
+
+=head2 type
+
+Returns the L<Type::Tiny> type the object was created with.
 
 =head1 AUTHOR
 

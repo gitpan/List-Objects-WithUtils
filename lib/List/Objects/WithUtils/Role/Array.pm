@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.010001';
+  $List::Objects::WithUtils::Role::Array::VERSION = '1.010002';
 }
 use strictures 1;
 
@@ -62,18 +62,25 @@ sub __flatten {
 
 use Role::Tiny;
 
-=pod
-
-=for Pod::Coverage TO_JSON
-
-=cut
-
-sub TO_JSON { [ @{ $_[0] } ] }
-
+# FIXME undecided on whether we should bother to to_TypeTiny() here.
+#  Probably it should be the user's problem . . .
+#my $_loaded_tt;
 sub _try_coerce {
   my (undef, $type, @vals) = @_;
-  Carp::confess "Expected a Type::Tiny type but got $type"
-    unless Scalar::Util::blessed $type;
+
+#  unless (blessed $type) {
+#    unless ($_loaded_tt) {
+#      eval {; require Types::TypeTiny; 1 }
+#        and !$@
+#        or Carp::confess 
+#         "'$type' is not a Type::Tiny and failed to load Types::TypeTiny: $@";
+#        ++$_loaded_tt;
+#    }
+#    $type = Types::TypeTiny::to_TypeTiny($type);
+    Carp::confess "Expected a Type::Tiny type but got $type"
+      unless Scalar::Util::blessed $type;
+#  }
+
   CORE::map {;
     my $coerced;
     $type->check($_) ? $_
@@ -84,6 +91,17 @@ sub _try_coerce {
   } @vals
 }
 
+=pod
+
+=for Pod::Coverage TO_JSON type
+
+=cut
+
+sub TO_JSON { [ @{ $_[0] } ] }
+
+sub type {
+  # array() has an empty ->type
+}
 
 sub new {
   if (my $blessed = Scalar::Util::blessed $_[0]) {
@@ -271,20 +289,20 @@ sub bisect {
 
 
 sub tuples {
-  # FIXME add optional Type::Tiny typecheck?
   my ($self, $size, $type) = @_;
   $size = 2 unless defined $size;
   Carp::confess "Expected a positive integer size but got $size"
-    if $size < 0;
+    if $size < 1;
   my $itr = List::MoreUtils::natatime($size, @$self);
-  my $new = blessed_or_pkg($self)->new;
+  my @res;
   while (my @nxt = $itr->()) {
     if (defined $type) {
-      @nxt = CORE::map {; $self->_try_coerce($type, $_) } @nxt
+      @nxt = CORE::map {; $self->_try_coerce($type, $_) }
+        @nxt[0 .. ($size-1)]
     }
-    $new->push( [ (@nxt == 2 ? @nxt : (@nxt, undef) ) ] )
+    CORE::push @res, [ @nxt ];
   }
-  $new
+  blessed_or_pkg($self)->new(@res)
 }
 
 sub reduce {
@@ -494,6 +512,9 @@ be added to the new array.
 
 Dies with a stack trace if the value fails type checks and can't be coerced.
 
+(You probably want an B<array_of> object from
+L<List::Objects::WithUtils::Array::Typed> instead.)
+
 See: L<Types::Standard>, L<List::Objects::Types>
 
 =head2 Methods that retrieve items
@@ -653,7 +674,7 @@ from the specified indexes.
   #    [ 1, 2 ], 
   #    [ 3, 4 ],
   #    [ 5, 6 ],
-  #    [ 7, undef ],
+  #    [ 7 ],
   #  )
 
 Simple sugar for L</natatime>; returns a new array object consisting of tuples
@@ -661,11 +682,12 @@ Simple sugar for L</natatime>; returns a new array object consisting of tuples
 
 C<tuples> accepts L<Type::Tiny> types as an optional second parameter; if
 specified, items in tuples are checked against the type and a coercion is
-attempted if the initial type-check fails; a stack-trace is thrown if a value
-in a tuple cannot be made to validate:
+attempted if the initial type-check fails:
 
   use Types::Standard -all;
-  my $tuples = array(1 .. 7)->tuples(2, Int);
+  my $tuples = array(1 .. 7)->tuples(2 => Int);
+
+A stack-trace is thrown if a value in a tuple cannot be made to validate.
 
 See: L<Types::Standard>, L<List::Objects::Types>
 

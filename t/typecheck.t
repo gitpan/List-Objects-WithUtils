@@ -1,9 +1,8 @@
 
 BEGIN {
   unless (
-    eval {; require List::Objects::Types; 1 }
-    && eval {; require Types::Standard; 1 }
-    && !$@
+    eval {; require List::Objects::Types; 1 } && !$@
+    && eval {; require Types::Standard; 1 }   && !$@
   ) {
     require Test::More;
     Test::More::plan(skip_all => 
@@ -39,6 +38,9 @@ use Types::Standard -all;
   $arr = array( [], [], [], [] );
   ok $tuples = $arr->tuples(2, ArrayObj), 'ArrayObj coercion ok';  
   ok $tuples->shift->[0]->count == 0, 'ArrayObj was coerced';
+
+  eval {; $tuples = $arr->tuples(3, ArrayObj) };
+  ok $@ =~ m/type/i, 'ArrayObj check failed on odd tuple ok';
 }
 
 # validated
@@ -62,6 +64,8 @@ use Types::Standard -all;
 {
   use List::Objects::WithUtils 'array_of';
   my $arr = array_of Int() => 1 .. 3;
+  ok $arr->type == Int, 'type returned Int ok';
+  ok !array->type, 'plain ArrayObj has no type ok';
   
   eval {; my $bad = array_of( Int() => qw/foo 1 2/) };
   ok $@ =~ /constraint/, 'array_of invalid type died ok' or diag explain $@;
