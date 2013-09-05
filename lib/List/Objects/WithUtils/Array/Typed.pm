@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Array::Typed;
 {
-  $List::Objects::WithUtils::Array::Typed::VERSION = '1.010002';
+  $List::Objects::WithUtils::Array::Typed::VERSION = '1.011000';
 }
 use strictures 1;
 
@@ -13,12 +13,8 @@ use Exporter 'import';
 our @EXPORT = 'array_of';
 sub array_of { __PACKAGE__->new(@_) }
 
-use overload
-  '@{}'    => sub { $_[0]->{array} },
-  fallback => 1;
-
 sub type {
-  $_[0]->{type}
+  tied(@{$_[0]})->type
 }
 
 sub new {
@@ -26,7 +22,7 @@ sub new {
   my $type;
 
   if (my $blessed = Scalar::Util::blessed $class) {
-    $type  = $class->{type};
+    $type  = $class->type;
     $class = $blessed;
   } else {
     $type = shift;
@@ -36,47 +32,11 @@ sub new {
     unless Scalar::Util::blessed($type)
     && $type->isa('Type::Tiny');
 
-  my $self = +{ type => $type };
+  require Type::Tie;
+  my $self = [];
+  tie(@$self, 'Type::Tie::ARRAY', $type);
+  push @$self, @_;
   bless $self, $class;
-
-  $self->{array} = [ map {; $self->_try_coerce($type, $_) } @_ ];
-
-  $self
-}
-
-sub push {
-  my $self = shift;
-  $self->SUPER::push( 
-    map {; $self->_try_coerce($self->type, $_) } @_
-  )
-}
-
-sub unshift {
-  my $self = shift;
-  $self->SUPER::unshift(
-    map {; $self->_try_coerce($self->type, $_) } @_
-  )
-}
-
-sub set {
-  my $self = shift;
-  $self->SUPER::set( $_[0], $self->_try_coerce($self->type, $_[1]) )
-}
-
-sub insert {
-  my $self = shift;
-  $self->SUPER::insert( $_[0], $self->_try_coerce($self->type, $_[1]) )
-}
-
-sub splice {
-  my ($self, $one, $two) = splice @_, 0, 3;
-  $self->SUPER::splice(
-    $one, $two,
-    ( @_ ? 
-      map {; $self->_try_coerce($self->type, $_) } @_
-      : ()
-    ),
-  )
 }
 
 print
@@ -88,7 +48,7 @@ unless caller;
 
 =pod
 
-=for Pod::Coverage new push unshift set insert splice array_of
+=for Pod::Coverage new array_of
 
 =head1 NAME
 
@@ -113,6 +73,8 @@ List::Objects::WithUtils::Array::Typed - Type-checking array objects
 A L<List::Objects::WithUtils::Array> subclass providing type-checking via
 L<Type::Tiny> types.
 
+This module requires L<Type::Tie>.
+
 The first argument passed to the constructor should be a L<Type::Tiny> type:
 
   use Types::Standard -all;
@@ -121,8 +83,7 @@ The first argument passed to the constructor should be a L<Type::Tiny> type:
 Elements are checked against the specified type when the object is constructed
 or new elements are added.
 
-If the initial type-check fails, a coercion is
-attempted.
+If the initial type-check fails, a coercion is attempted.
 
 Values that cannot be coerced will throw an exception.
 
@@ -137,7 +98,7 @@ Returns the L<Type::Tiny> type the object was created with.
 
 =head1 AUTHOR
 
-Jon Portnoy <avenj@cobaltirc.org>
-
+Jon Portnoy <avenj@cobaltirc.org> with significant contributions from Toby
+Inkster (CPAN: TOBYINK)
 
 =cut

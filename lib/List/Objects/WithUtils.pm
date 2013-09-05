@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '1.010002';
+  $List::Objects::WithUtils::VERSION = '1.011000';
 }
 use Carp;
 use strictures 1;
@@ -20,7 +20,9 @@ sub import {
   if (!@funcs) {
     @funcs = @DefaultImport
   } elsif (grep {; lc $_ eq 'all' || lc $_ eq ':all' } @funcs) {
-    @funcs = ( @DefaultImport, 'autobox', 'array_of' )
+    @funcs = ( @DefaultImport, 'autobox', 'array_of', 'hash_of' )
+  } elsif (grep {; lc $_ eq 'functions' || lc $_ eq ':functions' } @funcs) {
+    @funcs = ( @DefaultImport, 'array_of', 'hash_of' )
   }
 
   my @mods;
@@ -39,6 +41,10 @@ sub import {
     }
     if ($function eq 'array_of') {
       push @mods, 'List::Objects::WithUtils::Array::Typed';
+      next
+    }
+    if ($function eq 'hash_of') {
+      push @mods, 'List::Objects::WithUtils::Hash::Typed';
       next
     }
     if ($function eq 'autobox') {
@@ -90,6 +96,9 @@ List::Objects::WithUtils - List objects with useful methods
 
   # Import 'array()', 'immarray()', 'hash()' object constructors:
   use List::Objects::WithUtils;
+
+  # Import all functions:
+  use List::Objects::WithUtils ':functions';
 
   # Import all of the above plus autoboxing:
   use List::Objects::WithUtils ':all';
@@ -186,7 +195,12 @@ List::Objects::WithUtils - List objects with useful methods
   # Type-checking arrays:
   use List::Objects::WithUtils 'array_of';
   use Types::Standard -all;
-  my $ints = array_of( Int, 1 .. 10 );
+  my $int_arr = array_of( Int, 1 .. 10 );
+
+  # Type-checking hashes:
+  use List::Objects::WithUtils 'hash_of';
+  use Types::Standard -all;
+  my $int_hash = hash_of( Int, foo => 1, bar => 2 );
 
   # Hashes can be inflated to objects:
   my $obj = $hash->inflate;
@@ -233,6 +247,11 @@ C<array>, C<immarray>, and C<hash> functions.
 Importing B<array_of> gives you L<Type::Tiny>-compatible type-checking array
 objects; see L<List::Objects::WithUtils::Array::Typed>.
 
+Importing B<hash_of> gives you L<Type::Tiny>-compatible type-checking hash
+objects; see L<List::Objects::WithUtils::Hash::Typed>.
+
+Importing B<functions> or B<:functions> will import all of the above.
+
 Importing B<all> or B<:all> will import all of the above and additionally turn
 B<autobox> on, as will the shortcut C<use Lowu;> (as of 1.003).
 
@@ -265,6 +284,9 @@ immutable arrays.
 
 L<List::Objects::WithUtils::Array::Typed> for more on C<array_of()>
 type-checking arrays.
+
+L<List::Objects::WithUtils::Hash::Typed> for more on C<hash_of()>
+type-checking hashes.
 
 L<List::Objects::WithUtils::Autobox> for details on autoboxing.
 
@@ -333,6 +355,9 @@ Phillips (CPAN: MATTP), haarg, and others.
 Immutable array objects were inspired by L<Const::Fast>.
 
 Junctions are adapted from L<Perl6::Junction> by Carl Franks.
+
+Many of the useful type-checking bits were contributed by Toby Inkster (CPAN:
+TOBYINK).
 
 Much of this code simply wraps other widely-used modules, including:
 

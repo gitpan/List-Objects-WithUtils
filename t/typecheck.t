@@ -100,4 +100,41 @@ use Types::Standard -all;
   isa_ok $mapped, 'List::Objects::WithUtils::Array::Typed';
 }
 
+# tied array
+{
+  use List::Objects::WithUtils 'array_of';
+  my $arr = array_of Int() => 1 .. 3;
+  
+  eval {; push @$arr, 'foo' };
+  ok $@ =~ /type/, 'invalid type push died ok';
+  push @$arr, 4 .. 6;
+  ok $arr->count == 6, 'count ok after push';
+
+  eval {; unshift @$arr, 'bar' };
+  ok $@ =~ /type/, 'invalid type unshift died ok';
+  unshift @$arr, 7 .. 9;
+  ok $arr->count == 9, 'count ok after unshift';
+
+  eval {; $arr->[0] = 'foo' };
+  ok $@ =~ /type/, 'invalid type set died ok';
+  $arr->[0] = 42;
+  is $arr->[0], 42, 'valid type set ok';
+}
+
+# hash_of
+{
+  use List::Objects::WithUtils 'hash_of';
+  my $h = hash_of Int() => (foo => 1, bar => 2);
+  ok $h->type == Int, 'type returned Int ok';
+  ok !hash->type, 'plain HashObj has no type ok';
+  
+  eval {; my $bad = hash_of( Int() => qw/foo 1 bar baz/) };
+  ok $@ =~ /constraint/, 'array_of invalid type died ok' or diag explain $@;
+  
+  eval {; $h->set(baz => 3.14159) };
+  ok $@ =~ /type/, 'invalid type set died ok';
+  ok $h->set(baz => 3), 'valid type set ok';
+  ok $h->keys->count == 3, 'count ok after set';
+}
+
 done_testing;

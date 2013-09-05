@@ -20,6 +20,7 @@ lib/List/Objects/WithUtils/Autobox.pm
 lib/List/Objects/WithUtils/Hash.pm
 lib/List/Objects/WithUtils/Hash/Inflated.pm
 lib/List/Objects/WithUtils/Hash/Inflated/RW.pm
+lib/List/Objects/WithUtils/Hash/Typed.pm
 lib/List/Objects/WithUtils/Role/Array.pm
 lib/List/Objects/WithUtils/Role/Hash.pm
 lib/List/Objects/WithUtils/Role/WithJunctions.pm

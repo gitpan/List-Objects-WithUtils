@@ -20,8 +20,10 @@ my @modules = qw(
   Role::Tiny
   Scalar::Util
   Test::More
+  Type::Tie
   Type::Tiny
   autobox
+  overload
   parent
   perl
   strictures
