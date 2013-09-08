@@ -25,7 +25,6 @@ my @modules = qw(
   autobox
   overload
   parent
-  perl
   strictures
 );
 

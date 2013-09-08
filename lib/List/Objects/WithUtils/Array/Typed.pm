@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Array::Typed;
 {
-  $List::Objects::WithUtils::Array::Typed::VERSION = '1.011000';
+  $List::Objects::WithUtils::Array::Typed::VERSION = '1.011001';
 }
 use strictures 1;
 
@@ -8,6 +8,7 @@ use parent 'List::Objects::WithUtils::Array';
 
 use Carp ();
 use Scalar::Util ();
+use Type::Tie ();
 
 use Exporter 'import';
 our @EXPORT = 'array_of';
@@ -32,7 +33,6 @@ sub new {
     unless Scalar::Util::blessed($type)
     && $type->isa('Type::Tiny');
 
-  require Type::Tie;
   my $self = [];
   tie(@$self, 'Type::Tie::ARRAY', $type);
   push @$self, @_;
