@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '1.011001';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '1.012001';
 }
 use strictures 1;
 
@@ -108,11 +108,20 @@ sub values {
 }
 
 sub kv {
-  my ($self) = @_;
-  blessed_or_pkg($self)->array_type->new(
-    map {;
-      [ $_, $self->{ $_ } ]
-    } CORE::keys %$self
+  blessed_or_pkg($_[0])->array_type->new(
+    map {; [ $_, $_[0]->{ $_ } ] } CORE::keys %{ $_[0] }
+  )
+}
+
+sub kv_sort {
+  if (defined $_[1]) {
+    return blessed_or_pkg($_[0])->array_type->new(
+      map {; [ $_, $_[0]->{ $_ } ] }
+        CORE::sort {; $_[1]->($a, $b) } CORE::keys %{ $_[0] }
+    )
+  }
+  blessed_or_pkg($_[0])->array_type->new(
+    map {; [ $_, $_[0]->{ $_ } ] } CORE::sort( CORE::keys %{ $_[0] } )
   )
 }
 
@@ -262,6 +271,22 @@ Returns the list of values in the hash as an L</array_type> object.
 
 Returns an L</array_type> object containing the key/value pairs in the HASH,
 each of which is a two-element ARRAY.
+
+=head2 kv_sort
+
+  my $kvs = hash(a => 1, b => 2, c => 3)->kv_sort;
+  # $kvs = array(
+  #          [ a => 1 ], 
+  #          [ b => 2 ], 
+  #          [ c => 3 ]
+  #        )
+
+  my $reversed = hash(a => 1, b => 2, c => 3)
+    ->kv_sort(sub { $_[1] cmp $_[0] });
+  # Reverse result as above
+
+Like L</kv>, but sorted by key. A sort routine can be provided; C<$_[0]> and
+C<$_[1]> are equivalent to the usual sort variables C<$a> and C<$b>.
 
 =head2 set
 

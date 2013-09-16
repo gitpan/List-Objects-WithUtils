@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '1.011001';
+  $List::Objects::WithUtils::VERSION = '1.012001';
 }
 use Carp;
 use strictures 1;
@@ -259,7 +259,7 @@ B<Why another object-oriented list module?>
 
 There are a fair few object-oriented approaches to lists on CPAN, none of
 which were quite what I needed. L<Data::Perl> comes the closest -- but is
-primarily targetting MooX::HandlesVia and cannot guarantee a stable API at the
+primarily targetting MooX::HandlesVia and could not guarantee a stable API at the
 time this was written (plus, I don't need the other data types).
 
 This module aims to provide a consistent, natural interface to hashes and
