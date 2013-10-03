@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '1.012001';
+  $List::Objects::WithUtils::Role::Array::VERSION = '2.001001';
 }
 use strictures 1;
 
@@ -9,6 +9,8 @@ use Carp ();
 use List::Util ();
 use List::MoreUtils ();
 use List::UtilsBy ();
+
+use Module::Runtime ();
 
 use Scalar::Util ();
 
@@ -21,13 +23,14 @@ use Scalar::Util ();
 Regarding blessed_or_pkg():
 This is some nonsense to support autoboxing; if we aren't blessed, we're
 autoboxed, in which case we appear to have no choice but to cheap out and
-return the basic array type:
+return the basic array type.
 
 =end comment
 
 =cut
 
 sub ARRAY_TYPE () { 'List::Objects::WithUtils::Array' }
+
 sub blessed_or_pkg {
   my ($item) = @_;
   my $pkg;
@@ -62,24 +65,13 @@ sub __flatten {
 
 use Role::Tiny;
 
-# FIXME undecided on whether we should bother to to_TypeTiny() here.
-#  Probably it should be the user's problem . . .
-#my $_loaded_tt;
+
+sub inflated_type { 'List::Objects::WithUtils::Hash' }
+
 sub _try_coerce {
   my (undef, $type, @vals) = @_;
-
-#  unless (blessed $type) {
-#    unless ($_loaded_tt) {
-#      eval {; require Types::TypeTiny; 1 }
-#        and !$@
-#        or Carp::confess 
-#         "'$type' is not a Type::Tiny and failed to load Types::TypeTiny: $@";
-#        ++$_loaded_tt;
-#    }
-#    $type = Types::TypeTiny::to_TypeTiny($type);
     Carp::confess "Expected a Type::Tiny type but got $type"
       unless Scalar::Util::blessed $type;
-#  }
 
   CORE::map {;
     my $coerced;
@@ -97,8 +89,6 @@ sub _try_coerce {
 
 =cut
 
-sub TO_JSON { [ @{ $_[0] } ] }
-
 sub type {
   # array() has an empty ->type
 }
@@ -115,6 +105,16 @@ sub copy {
   blessed_or_pkg($self)->new(@$self);
 }
 
+sub inflate {
+  my ($self) = @_;
+  my $pkg = blessed_or_pkg($self);
+  Module::Runtime::require_module( $pkg->inflated_type );
+  $pkg->inflated_type->new(@$self)
+}
+
+sub unbless { [ @{ $_[0] } ] }
+{ no warnings 'once'; *TO_JSON = *unbless; }
+
 sub validated {
   my ($self, $type) = @_;
   blessed_or_pkg($_[0])->new(
@@ -125,6 +125,8 @@ sub validated {
 sub all { @{ $_[0] } }
 
 sub count { CORE::scalar @{ $_[0] } }
+
+sub end { $#{ $_[0] } }
 
 { no warnings 'once'; *scalar = *count; *export = *all; }
 
@@ -167,10 +169,17 @@ sub unshift {
 
 sub clear  { @{ $_[0] } = (); $_[0] }
 
-sub delete { 
-  scalar( 
-    CORE::splice @{ $_[0] }, $_[1], 1
-  ) 
+sub delete { scalar CORE::splice @{ $_[0] }, $_[1], 1 }
+
+sub delete_when {
+  my ($self, $sub) = @_;
+  my @removed;
+  my $i = @$self;
+  while ($i--) {
+    CORE::push @removed, CORE::splice @$self, $i, 1 
+      if $sub->(local $_ = $self->[$i]);
+  }
+  blessed_or_pkg($_[0])->new(@removed)
 }
 
 sub insert { 
@@ -414,7 +423,7 @@ A L<Role::Tiny> role defining methods for creating and manipulating ARRAY-type
 objects.
 
 L<List::Objects::WithUtils::Array> consumes this role (along with
-L<List::Objects::WithUtils::Role::WithJunctions>) to provide B<array()> object
+L<List::Objects::WithUtils::Role::Array::WithJunctions>) to provide B<array()> object
 methods.
 
 In addition to the methods documented below, these objects provide a
@@ -435,6 +444,10 @@ Creates a shallow clone of the current object.
 
 Returns the number of elements in the array.
 
+=head3 end
+
+Returns the last index of the array.
+
 =head3 is_empty
 
 Returns boolean true if the array is empty.
@@ -442,6 +455,28 @@ Returns boolean true if the array is empty.
 =head3 scalar
 
 See L</count>.
+
+=head3 inflate
+
+  my $hash = $array->inflate;
+  # Same as:
+  # my $hash = hash( $array->all )
+
+Inflates an array-type object to a hash-type object.
+
+Returns an L</inflated_type> object; by default this is a
+L<List::Objects::WithUtils::Hash>.
+
+=head3 inflated_type
+
+The class name that objects are blessed into when calling L</inflate>;
+subclasses can override to provide their own hash-type objects.
+
+Defaults to L<List::Objects::WithUtils::Hash>.
+
+=head3 unbless
+
+Returns a plain C</ARRAY> reference (shallow clone).
 
 =head2 Methods that manipulate the list
 
@@ -452,6 +487,15 @@ Clears the array entirely.
 =head3 delete
 
 Splices a given index out of the array.
+
+=head3 delete_when
+
+  $array->delete_when( sub { $_ eq 'foo' } );
+
+Splices all items out of the array for which the given subroutine evaluates to
+true.
+
+Returns a new array object containing the deleted values (possibly none).
 
 =head3 insert
 
@@ -526,7 +570,7 @@ Returns all elements in the array as a plain list.
 =head3 bisect
 
   my ($true, $false) = array( 1 .. 10 )
-    ->bisect(sub { $_[0] >= 5 })
+    ->bisect(sub { $_ >= 5 })
     ->all;
   my @bigger  = $true->all;   # ( 5 .. 10 )
   my @smaller = $false->all;  # ( 1 .. 4 )
@@ -638,10 +682,11 @@ Skipped partitions are empty array objects:
   $parts->get(0)->is_empty;  # true
   $parts->get(1)->is_empty;  # false
 
-The subroutine is passed the value we are operating on:
+The subroutine is passed the value we are operating on, or you can use the
+topicalizer C<$_>:
 
   array(qw/foo bar baz 1 2 3/)
-    ->part(sub { $_[0] =~ /^[0-9]+$/ ? 0 : 1 })
+    ->part(sub { m/^[0-9]+$/ ? 0 : 1 })
     ->get(1)
     ->all;   # 'foo', 'bar', 'baz'
 
@@ -849,7 +894,7 @@ L<List::Objects::WithUtils>
 
 L<List::Objects::WithUtils::Array>
 
-L<List::Objects::WithUtils::Role::WithJunctions>
+L<List::Objects::WithUtils::Role::Array::WithJunctions>
 
 L<List::Objects::WithUtils::Array::Immutable>
 

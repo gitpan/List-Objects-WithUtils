@@ -1,5 +1,5 @@
 ---
-abstract: 'List objects with useful methods'
+abstract: 'List objects, kitchen sink included'
 author:
   - 'Jon Portnoy <avenj@cobaltirc.org>'
 build_requires:
@@ -7,7 +7,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300037, CPAN::Meta::Converter version 2.120921'
+generated_by: 'Dist::Zilla version 4.300039, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -17,7 +17,9 @@ recommends:
   Type::Tiny: 0.022
 requires:
   Carp: 0
+  Class::Method::Modifiers: 0
   Exporter: 0
+  Hash::Util: 0
   List::MoreUtils: 0.33
   List::Util: 1.18
   List::UtilsBy: 0.09
@@ -31,4 +33,4 @@ requires:
   strictures: 1
 resources:
   repository: git://github.com/avenj/list-objects-withutils.git
-version: 1.012001
+version: 2.001001

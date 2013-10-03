@@ -1,69 +1,25 @@
 package List::Objects::WithUtils::Array::Immutable;
 {
-  $List::Objects::WithUtils::Array::Immutable::VERSION = '1.012001';
+  $List::Objects::WithUtils::Array::Immutable::VERSION = '2.001001';
 }
 use strictures 1;
-require Carp;
 
-use parent 'List::Objects::WithUtils::Array';
-
+require Role::Tiny;
+Role::Tiny->apply_roles_to_package( __PACKAGE__,
+  qw/
+    List::Objects::WithUtils::Role::Array
+    List::Objects::WithUtils::Role::Array::WithJunctions
+    List::Objects::WithUtils::Role::Array::Immutable
+  /,
+);
 
 use Exporter 'import';
 our @EXPORT = 'immarray';
 sub immarray { __PACKAGE__->new(@_) }
 
-
-sub new {
-  my $class = shift;
-  my $self = $class->SUPER::new( @_ );
-
-  &Internals::SvREADONLY($self, 1);
-  Internals::SvREADONLY($_, 1) for @$self;
-
-  $self
-}
-
-
-sub __unimp { 
-  local $Carp::CarpLevel = 1;
-  Carp::croak 'Method not implemented on immutable arrays'
-}
-{ no warnings 'once';
-  *clear = *__unimp;
-  *set   = *__unimp;
-  *pop   = *__unimp;
-  *push  = *__unimp;
-  *shift = *__unimp;
-  *unshift = *__unimp;
-  *delete  = *__unimp;
-  *insert  = *__unimp;
-  *splice  = *__unimp;
-}
-
-print
- qq[<LeoNerd> Coroutines are not magic pixiedust\n],
- qq[<DrForr> LeoNerd: Any sufficiently advanced technology.\n],
- qq[<LeoNerd> DrForr: ... probably corrupts the C stack during XS calls? ;)\n],
-unless caller;
 1;
 
 =pod
-
-=begin Pod::Coverage
-
-new
-immarray
-clear
-set
-pop
-push
-shift 
-unshift 
-delete 
-insert 
-splice
-
-=end Pod::Coverage
 
 =head1 NAME
 
@@ -79,19 +35,26 @@ List::Objects::WithUtils::Array::Immutable - Immutable array objects
 
 =head1 DESCRIPTION
 
-A subclass of L<List::Objects::WithUtils::Array> without the following
-list-mutating methods:
+These are immutable array objects; attempting to call list-mutating methods
+will throw an exception.
 
-  clear
-  set
-  pop push
-  shift unshift
-  delete
-  insert
-  splice
+On Perls which support it properly, the array is also marked read-only;
+manually modifying the backing ARRAY reference will also throw an exception.
 
-The array is marked read-only; attempting to call the methods listed above or
-manually modify the backing ARRAY reference will throw an exception.
+This class consumes the following roles, which contain most of the relevant
+documentation:
+
+L<List::Objects::WithUtils::Role::Array>
+
+L<List::Objects::WithUtils::Role::Array::WithJunctions>
+
+L<List::Objects::WithUtils::Role::Array::Immutable>
+
+(See L<List::Objects::WithUtils::Array> for a mutable implementation.)
+
+=head2 immarray
+
+Creates a new immutable array object.
 
 =head1 AUTHOR
 

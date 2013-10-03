@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '1.012001';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '2.001001';
 }
 use strictures 1;
 
@@ -32,8 +32,6 @@ sub inflated_rw_type { 'List::Objects::WithUtils::Hash::Inflated::RW' }
 
 =cut
 
-sub TO_JSON { +{ %{ $_[0] } } }
-
 sub type { }
 
 sub new {
@@ -41,7 +39,10 @@ sub new {
   bless +{ @_[1 .. $#_] }, $_[0]
 }
 
-sub clear { %{ $_[0] } = () }
+sub unbless { +{ %{ $_[0] } } }
+{ no warnings 'once'; *TO_JSON = *unbless; }
+
+sub clear { %{ $_[0] } = (); $_[0] }
 
 sub copy {
   bless +{ %{ $_[0] } }, blessed_or_pkg($_[0])
@@ -190,9 +191,15 @@ Returns a raw key/value list.
 
 Clears the current hash entirely.
 
+Returns the hash object (as of version 1.013).
+
 =head2 copy
 
 Creates a shallow clone of the current object.
+
+=head2 unbless
+
+Returns a plain C</HASH> reference (shallow clone).
 
 =head2 defined
 

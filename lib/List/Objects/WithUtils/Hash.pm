@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Hash;
 {
-  $List::Objects::WithUtils::Hash::VERSION = '1.012001';
+  $List::Objects::WithUtils::Hash::VERSION = '2.001001';
 }
 use strictures 1;
 
@@ -13,7 +13,9 @@ use Exporter 'import';
 our @EXPORT = 'hash';
 sub hash { __PACKAGE__->new(@_) }
 
-1;
+print
+  qq[<mauke> die "bad meth"\n<nperez> die "better call saul"\n]
+unless caller; 1;
 
 =pod
 

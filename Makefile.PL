@@ -9,7 +9,7 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "List objects with useful methods",
+  "ABSTRACT" => "List objects, kitchen sink included",
   "AUTHOR" => "Jon Portnoy <avenj\@cobaltirc.org>",
   "BUILD_REQUIRES" => {},
   "CONFIGURE_REQUIRES" => {
@@ -21,7 +21,9 @@ my %WriteMakefileArgs = (
   "NAME" => "List::Objects::WithUtils",
   "PREREQ_PM" => {
     "Carp" => 0,
+    "Class::Method::Modifiers" => 0,
     "Exporter" => 0,
+    "Hash::Util" => 0,
     "List::MoreUtils" => "0.33",
     "List::Util" => "1.18",
     "List::UtilsBy" => "0.09",
@@ -37,9 +39,9 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "Test::More" => "0.88"
   },
-  "VERSION" => "1.012001",
+  "VERSION" => "2.001001",
   "test" => {
-    "TESTS" => "t/*.t t/t_autoboxed/*.t t/t_junction/*.t"
+    "TESTS" => "t/*.t t/00_load/*.t t/01_array/*.t t/02_hash/*.t t/03_junctions/*.t t/04_immutable/*.t t/05_typed/*.t t/06_immutable_typed/*.t t/07_json/*.t"
   }
 );
 
