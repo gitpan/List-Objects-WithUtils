@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '2.001001';
+  $List::Objects::WithUtils::Role::Array::VERSION = '2.002001';
 }
 use strictures 1;
 
@@ -68,6 +68,9 @@ use Role::Tiny;
 
 sub inflated_type { 'List::Objects::WithUtils::Hash' }
 
+sub is_mutable { 1 }
+sub is_immutable { ! $_[0]->is_mutable }
+
 sub _try_coerce {
   my (undef, $type, @vals) = @_;
     Carp::confess "Expected a Type::Tiny type but got $type"
@@ -128,7 +131,11 @@ sub count { CORE::scalar @{ $_[0] } }
 
 sub end { $#{ $_[0] } }
 
-{ no warnings 'once'; *scalar = *count; *export = *all; }
+{ no warnings 'once'; 
+  *scalar = *count; 
+  *export = *all;
+  *elements  = *all;
+}
 
 sub is_empty { CORE::scalar @{ $_[0] } ? 0 : 1 }
 
@@ -136,6 +143,13 @@ sub get { $_[0]->[ $_[1] ] }
 sub set { $_[0]->[ $_[1] ] = $_[2] ; $_[0] }
 
 sub random { $_[0]->[ rand @{ $_[0] } ] }
+
+sub kv {
+  my ($self) = @_;
+  blessed_or_pkg($self)->new(
+    map {; [ $_ => $self->[$_] ] } 0 .. $#$self
+  )
+}
 
 sub head {
   wantarray ?
@@ -438,7 +452,7 @@ Constructs a new ARRAY-type object.
 
 =head3 copy
 
-Creates a shallow clone of the current object.
+Returns a shallow clone of the current object.
 
 =head3 count
 
@@ -451,6 +465,16 @@ Returns the last index of the array.
 =head3 is_empty
 
 Returns boolean true if the array is empty.
+
+=head3 is_mutable
+
+Returns boolean true if the hash is mutable; immutable subclasses can override
+to provide a negative value.
+
+=head3 is_immutable
+
+The opposite of L</is_mutable>. (Subclasses do not need to override so long as
+L</is_mutable> returns a correct value.)
 
 =head3 scalar
 
@@ -467,6 +491,8 @@ Inflates an array-type object to a hash-type object.
 Returns an L</inflated_type> object; by default this is a
 L<List::Objects::WithUtils::Hash>.
 
+Throws an exception if the array contains an odd number of elements.
+
 =head3 inflated_type
 
 The class name that objects are blessed into when calling L</inflate>;
@@ -482,11 +508,15 @@ Returns a plain C</ARRAY> reference (shallow clone).
 
 =head3 clear
 
-Clears the array entirely.
+Delete all elements from the array.
+
+Returns the newly-emptied array object.
 
 =head3 delete
 
 Splices a given index out of the array.
+
+Returns the removed value.
 
 =head3 delete_when
 
@@ -502,6 +532,8 @@ Returns a new array object containing the deleted values (possibly none).
   $array->insert( $position, $value );
 
 Inserts a value at a given position.
+
+Returns the array object.
 
 =head3 pop
 
@@ -549,7 +581,7 @@ The existing array is modified in-place.
   my $valid = array(qw/foo bar baz/)->validated(Str);
 
 Accepts a L<Type::Tiny> type, against which each element of the current array
-will be checked before being added to the new array. 
+will be checked before being added to a new array. Returns the new array.
 
 If the element fails the type check but can be coerced, the coerced value will
 be added to the new array.
@@ -578,6 +610,11 @@ Returns all elements in the array as a plain list.
 Like L</part>, but creates an array-type object containing two
 partitions; the first contains all items for which the subroutine evaluates to
 true, the second contains the remaining items.
+
+=head3 elements
+
+Same as L</all>; included for consistency with similar array-type object
+classes.
 
 =head3 export
 
@@ -636,6 +673,12 @@ In scalar context, returns just the first element of the array:
 Similar to L</head>, but returns either the last element and a new array-type
 object containing the remaining list (in list context), or just the last
 element of the list (in scalar context).
+
+=head3 kv
+
+Returns an array-type object containing key/value pairs as (unblessed) ARRAYs;
+this is much like L<List::Objects::WithUtils::Role::Hash/"kv">, except the
+array index is the key.
 
 =head3 join
 
@@ -749,7 +792,7 @@ on; you can also use the topicalizer C<$_>.
 =head3 first
 
   my $arr = array( qw/ ab bc bd de / );
-  my $first = $arr->first(sub { $_ =~ /^b/ });  ## 'bc'
+  my $first = $arr->first(sub { /^b/ });  ## 'bc'
 
 Returns the first element of the list for which the given sub evaluates to
 true. C<$_> is set to each element, in turn, until a match is found (or we run

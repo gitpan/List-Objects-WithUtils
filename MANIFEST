@@ -36,6 +36,7 @@ lib/List/Objects/WithUtils/Role/Hash/Typed.pm
 lib/Lowu.pm
 t/00-report-prereqs.t
 t/00_load/all.t
+t/00_load/all_typetinyish.t
 t/00_load/autobox.t
 t/00_load/autobox_subclass.t
 t/00_load/bare.t
@@ -67,6 +68,7 @@ t/01_array/items_after_incl.t
 t/01_array/items_before.t
 t/01_array/items_before_incl.t
 t/01_array/join.t
+t/01_array/kv.t
 t/01_array/map.t
 t/01_array/mapval.t
 t/01_array/mesh.t

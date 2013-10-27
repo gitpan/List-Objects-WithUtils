@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '2.001001';
+  $List::Objects::WithUtils::VERSION = '2.002001';
 }
 use Carp;
 use strictures 1;
@@ -35,7 +35,7 @@ sub import {
     lc( substr($_, 0, 1) eq ':' ? substr($_, 1) : $_ ) => 1
   } @funcs;
 
-  if (defined $fmap{all}) {
+  if (defined $fmap{all} || defined $fmap{-all}) {
     @funcs = ( 
       @DefaultImport,
       'autobox'
@@ -47,7 +47,7 @@ sub import {
 
   my @mods;
   for my $function (@funcs) {
-    if ($function eq 'autobox') {
+    if ($function eq 'autobox' || $function eq '-autobox') {
       require List::Objects::WithUtils::Autobox;
       List::Objects::WithUtils::Autobox::import($class);
       next

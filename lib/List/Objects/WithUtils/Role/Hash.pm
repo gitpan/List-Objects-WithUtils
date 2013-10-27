@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '2.001001';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '2.002001';
 }
 use strictures 1;
 
@@ -31,6 +31,9 @@ sub inflated_rw_type { 'List::Objects::WithUtils::Hash::Inflated::RW' }
 =for Pod::Coverage TO_JSON type
 
 =cut
+
+sub is_mutable   { 1 }
+sub is_immutable { ! $_[0]->is_mutable }
 
 sub type { }
 
@@ -257,6 +260,15 @@ for modification:
 =head2 is_empty
 
 Returns boolean true if the hash has no keys.
+
+=head2 is_mutable
+
+Returns boolean true if the hash is mutable; immutable subclasses can override
+to provide a negative value.
+
+=head2 is_immutable
+
+The opposite of L</is_mutable>.
 
 =head2 keys
 

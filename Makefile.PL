@@ -28,7 +28,7 @@ my %WriteMakefileArgs = (
     "List::Util" => "1.18",
     "List::UtilsBy" => "0.09",
     "Module::Runtime" => "0.013",
-    "Role::Tiny" => 1,
+    "Role::Tiny" => "1.003",
     "Scalar::Util" => 0,
     "Type::Tie" => "0.004",
     "autobox" => 0,
@@ -39,7 +39,7 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "Test::More" => "0.88"
   },
-  "VERSION" => "2.001001",
+  "VERSION" => "2.002001",
   "test" => {
     "TESTS" => "t/*.t t/00_load/*.t t/01_array/*.t t/02_hash/*.t t/03_junctions/*.t t/04_immutable/*.t t/05_typed/*.t t/06_immutable_typed/*.t t/07_json/*.t"
   }

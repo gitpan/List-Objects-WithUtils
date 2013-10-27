@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array::Immutable;
 {
-  $List::Objects::WithUtils::Role::Array::Immutable::VERSION = '2.001001';
+  $List::Objects::WithUtils::Role::Array::Immutable::VERSION = '2.002001';
 }
 use strictures 1;
 use Carp ();
@@ -26,6 +26,8 @@ our @ImmutableMethods = qw/
 
 use Role::Tiny;
 requires 'new', @ImmutableMethods;
+
+around is_mutable => sub { () };
 
 around new => sub {
   my ($orig, $class) = splice @_, 0, 2;
