@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Autobox;
 {
-  $List::Objects::WithUtils::Autobox::VERSION = '2.002001';
+  $List::Objects::WithUtils::Autobox::VERSION = '2.002002';
 }
 use strictures 1;
 require Carp;
@@ -62,7 +62,7 @@ treat native Perl list references as if they were
 L<List::Objects::WithUtils::Array> or L<List::Objects::WithUtils::Hash>
 instances.
 
-Like L<autobox>, the effect is lexical in scope:
+Like L<autobox>, the effect is lexical in scope and can be disabled:
 
   use List::Objects::WithUtils::Autobox;
   my $foo = [3,2,1]->sort;

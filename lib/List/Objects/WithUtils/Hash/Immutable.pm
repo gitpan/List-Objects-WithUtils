@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Hash::Immutable;
 {
-  $List::Objects::WithUtils::Hash::Immutable::VERSION = '2.002001';
+  $List::Objects::WithUtils::Hash::Immutable::VERSION = '2.002002';
 }
 use strictures 1;
 
@@ -32,7 +32,7 @@ List::Objects::WithUtils::Hash::Immutable - Immutable hash objects
 =head1 DESCRIPTION
 
 These are immutable hash objects; attempting to call list-mutating methods
-will throw an exception.
+(or modify the backing hash directly) will throw an exception.
 
 This class consumes the following roles, which contain most of the relevant
 documentation:

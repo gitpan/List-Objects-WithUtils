@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Array::Immutable;
 {
-  $List::Objects::WithUtils::Array::Immutable::VERSION = '2.002001';
+  $List::Objects::WithUtils::Array::Immutable::VERSION = '2.002002';
 }
 use strictures 1;
 
@@ -36,10 +36,7 @@ List::Objects::WithUtils::Array::Immutable - Immutable array objects
 =head1 DESCRIPTION
 
 These are immutable array objects; attempting to call list-mutating methods
-will throw an exception.
-
-On Perls which support it properly, the array is also marked read-only;
-manually modifying the backing ARRAY reference will also throw an exception.
+(or modify the backing array directly) will throw an exception.
 
 This class consumes the following roles, which contain most of the relevant
 documentation:

@@ -23,7 +23,6 @@ my %WriteMakefileArgs = (
     "Carp" => 0,
     "Class::Method::Modifiers" => 0,
     "Exporter" => 0,
-    "Hash::Util" => 0,
     "List::MoreUtils" => "0.33",
     "List::Util" => "1.18",
     "List::UtilsBy" => "0.09",
@@ -39,37 +38,36 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "Test::More" => "0.88"
   },
-  "VERSION" => "2.002001",
+  "VERSION" => "2.002002",
   "test" => {
     "TESTS" => "t/*.t t/00_load/*.t t/01_array/*.t t/02_hash/*.t t/03_junctions/*.t t/04_immutable/*.t t/05_typed/*.t t/06_immutable_typed/*.t t/07_json/*.t"
   }
 );
 
 
-unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
-  my $tr = delete $WriteMakefileArgs{TEST_REQUIRES};
-  my $br = $WriteMakefileArgs{BUILD_REQUIRES};
-  for my $mod ( keys %$tr ) {
-    if ( exists $br->{$mod} ) {
-      $br->{$mod} = $tr->{$mod} if $tr->{$mod} > $br->{$mod};
-    }
-    else {
-      $br->{$mod} = $tr->{$mod};
-    }
-  }
-}
+my %FallbackPrereqs = (
+  "Carp" => 0,
+  "Class::Method::Modifiers" => 0,
+  "Exporter" => 0,
+  "List::MoreUtils" => "0.33",
+  "List::Util" => "1.18",
+  "List::UtilsBy" => "0.09",
+  "Module::Runtime" => "0.013",
+  "Role::Tiny" => "1.003",
+  "Scalar::Util" => 0,
+  "Test::More" => "0.88",
+  "Type::Tie" => "0.004",
+  "autobox" => 0,
+  "overload" => 0,
+  "parent" => 0,
+  "strictures" => 1
+);
 
-unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
-  my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};
-  my $pp = $WriteMakefileArgs{PREREQ_PM};
-  for my $mod ( keys %$br ) {
-    if ( exists $pp->{$mod} ) {
-      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod};
-    }
-    else {
-      $pp->{$mod} = $br->{$mod};
-    }
-  }
+
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
+  delete $WriteMakefileArgs{TEST_REQUIRES};
+  delete $WriteMakefileArgs{BUILD_REQUIRES};
+  $WriteMakefileArgs{PREREQ_PM} = \%FallbackPrereqs;
 }
 
 delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
