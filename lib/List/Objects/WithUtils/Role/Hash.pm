@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '2.002003';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '2.002004';
 }
 use strictures 1;
 
@@ -15,9 +15,8 @@ use Scalar::Util ();
 
 sub HASH_TYPE () { 'List::Objects::WithUtils::Hash' }
 sub blessed_or_pkg { 
-  my $pkg;
-  ($pkg = Scalar::Util::blessed $_[0]) ?
-    $pkg : Module::Runtime::use_module(HASH_TYPE)
+  Scalar::Util::blessed($_[0]) ?
+    $_[0] : Module::Runtime::use_module(HASH_TYPE)
 }
 
 use Role::Tiny;
@@ -51,7 +50,8 @@ sub unbless { +{ %{ $_[0] } } }
 sub clear { %{ $_[0] } = (); $_[0] }
 
 sub copy {
-  bless +{ %{ $_[0] } }, blessed_or_pkg($_[0])
+  my ($self) = @_;
+  blessed_or_pkg($self)->new(%$self)
 }
 
 sub inflate {
