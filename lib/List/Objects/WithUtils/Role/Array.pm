@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '2.002002';
+  $List::Objects::WithUtils::Role::Array::VERSION = '2.002003';
 }
 use strictures 1;
 
@@ -32,11 +32,8 @@ return the basic array type.
 sub ARRAY_TYPE () { 'List::Objects::WithUtils::Array' }
 
 sub blessed_or_pkg {
-  my ($item) = @_;
-  my $pkg;
-  ($pkg = Scalar::Util::blessed $item) ?
-    wantarray ? ($item, $pkg) : $item
-    : Module::Runtime::use_module(ARRAY_TYPE)
+  Scalar::Util::blessed($_[0]) ? 
+    $_[0] : Module::Runtime::use_module(ARRAY_TYPE)
 }
 
 

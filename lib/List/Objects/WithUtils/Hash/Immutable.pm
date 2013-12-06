@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Hash::Immutable;
 {
-  $List::Objects::WithUtils::Hash::Immutable::VERSION = '2.002002';
+  $List::Objects::WithUtils::Hash::Immutable::VERSION = '2.002003';
 }
 use strictures 1;
 

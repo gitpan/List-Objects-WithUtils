@@ -32,4 +32,4 @@ requires:
   strictures: 1
 resources:
   repository: git://github.com/avenj/list-objects-withutils.git
-version: 2.002002
+version: 2.002003

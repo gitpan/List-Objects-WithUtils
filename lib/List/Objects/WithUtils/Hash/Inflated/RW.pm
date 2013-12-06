@@ -1,15 +1,19 @@
 package List::Objects::WithUtils::Hash::Inflated::RW;
 {
-  $List::Objects::WithUtils::Hash::Inflated::RW::VERSION = '2.002002';
+  $List::Objects::WithUtils::Hash::Inflated::RW::VERSION = '2.002003';
 }
 use strictures 1;
+use Carp ();
+use Scalar::Util ();
 
 use parent 'List::Objects::WithUtils::Hash::Inflated';
 
 our $AUTOLOAD;
 sub AUTOLOAD {
-  my $self = shift || return;
+  my $self = shift;
   ( my $method = $AUTOLOAD ) =~ s/.*:://;
+  Scalar::Util::blessed($self)
+    or Carp::confess "Not a class method: '$method'";
 
   Carp::confess "Can't locate object method '$method'"
     unless exists $self->{$method};

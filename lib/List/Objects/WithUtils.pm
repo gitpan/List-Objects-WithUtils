@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '2.002002';
+  $List::Objects::WithUtils::VERSION = '2.002003';
 }
 use Carp;
 use strictures 1;
@@ -41,7 +41,7 @@ sub import {
       'autobox'
     )
   } elsif (defined $fmap{functions} || defined $fmap{funcs}) {
-    # Legacy import tag
+    # Legacy import tag, tested but not documented
     @funcs = @DefaultImport
   }
 
@@ -56,7 +56,7 @@ sub import {
       push @mods, 'List::Objects::WithUtils::'.$thismod;
       next
     }
-    carp "Unknown import parameter '$function'"
+    croak "Unknown import parameter '$function'"
   }
 
   $pkg = caller unless defined $pkg;

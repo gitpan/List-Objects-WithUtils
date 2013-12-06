@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '2.002002';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '2.002003';
 }
 use strictures 1;
 
@@ -39,6 +39,9 @@ sub type { }
 
 sub new {
   Module::Runtime::require_module( $_[0]->array_type );
+  if (my $blessed = Scalar::Util::blessed $_[0]) {
+    return bless +{ @_[1 .. $#_] }, $blessed
+  }
   bless +{ @_[1 .. $#_] }, $_[0]
 }
 

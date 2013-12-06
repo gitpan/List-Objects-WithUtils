@@ -14,19 +14,27 @@ for my $method
   (@List::Objects::WithUtils::Role::Hash::Immutable::ImmutableMethods) {
   local $@;
   eval {; $imm->$method };
-  ok $@ =~ /implemented/, "$method dies"
+  like $@, qr/implemented/, "$method dies"
 }
 
 eval {; $imm->{baz} = 'quux' };
-ok $@, 'attempt to add key died' or diag explain $@;
+like $@, qr/read-only/,
+  'attempt to add key died' or diag explain $@;
 
 eval {; $imm->{foo} = 2 };
-ok $@, 'attempt to modify existing died';
+like $@, qr/read-only/,
+  'attempt to modify existing died';
 
 eval {; delete $imm->{bar} };
-ok $@, 'attempt to delete key died';
+like $@, qr/read-only/,
+  'attempt to delete key died';
 
-ok $imm->get('foo') == 1 && $imm->get('bar') == 2;
+eval {; %$imm = () };
+like $@, qr/read-only/,
+  'attempt to clear hash died';
+
+ok $imm->get('foo') == 1 && $imm->get('bar') == 2,
+  'hash ok after attempted clear';
 
 ok !$imm->get('nonexistant'), 'retrieving nonexistant key ok';
 
