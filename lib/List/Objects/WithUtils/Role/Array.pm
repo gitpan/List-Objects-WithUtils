@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '2.002004';
+  $List::Objects::WithUtils::Role::Array::VERSION = '2.002005';
 }
 use strictures 1;
 
@@ -248,7 +248,8 @@ sub sliced {
 
 sub splice {
   blessed_or_pkg($_[0])->new(
-    CORE::splice @{ $_[0] }, $_[1], $_[2], @_[3 .. $#_]
+    @_ == 2 ? CORE::splice(@{ $_[0] }, $_[1])
+    : CORE::splice(@{ $_[0] }, $_[1], $_[2], @_[3 .. $#_])
   )
 }
 
@@ -562,7 +563,7 @@ Returns the array object.
 
 =head3 splice
 
-  # 2-arg splice (remove elements):
+  # 1- or 2-arg splice (remove elements):
   my $spliced = $array->splice(0, 2)
   # 3-arg splice (replace):
   $array->splice(0, 1, 'abc');
