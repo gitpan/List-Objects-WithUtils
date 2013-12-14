@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '2.002005';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '2.003001';
 }
 use strictures 1;
 
@@ -38,10 +38,7 @@ sub type { }
 
 sub new {
   Module::Runtime::require_module( $_[0]->array_type );
-  if (my $blessed = Scalar::Util::blessed $_[0]) {
-    return bless +{ @_[1 .. $#_] }, $blessed
-  }
-  bless +{ @_[1 .. $#_] }, $_[0]
+  bless +{ @_[1 .. $#_] }, Scalar::Util::blessed $_[0] || $_[0]
 }
 
 sub unbless { +{ %{ $_[0] } } }
@@ -49,10 +46,7 @@ sub unbless { +{ %{ $_[0] } } }
 
 sub clear { %{ $_[0] } = (); $_[0] }
 
-sub copy {
-  my ($self) = @_;
-  blessed_or_pkg($self)->new(%$self)
-}
+sub copy { blessed_or_pkg($_[0])->new(%{ $_[0] }) }
 
 sub inflate {
   my ($self, %params) = @_;
@@ -65,7 +59,7 @@ sub inflate {
 sub defined { CORE::defined $_[0]->{ $_[1] } }
 sub exists  { CORE::exists  $_[0]->{ $_[1] } }
 
-sub is_empty { keys %{ $_[0] } ? 0 : 1 }
+sub is_empty { ! keys %{ $_[0] } }
 
 sub get {
   if (@_ > 2) {
@@ -114,6 +108,13 @@ sub values {
   )
 }
 
+sub intersection {
+  my %seen;
+  blessed_or_pkg($_[0])->array_type->new(
+    grep {; ++$seen{$_} > $#_ } map {; CORE::keys %$_ } @_
+  )
+}
+
 sub kv {
   blessed_or_pkg($_[0])->array_type->new(
     map {; [ $_, $_[0]->{ $_ } ] } CORE::keys %{ $_[0] }
@@ -134,6 +135,11 @@ sub kv_sort {
 
 sub export { %{ $_[0] } }
 
+print
+  qq[<Su-Shee> huf: I learned that from toyota via agile blahblah,],
+  qq[ it's asking the five "why" questions.\n],
+  qq[<mauke> WHY WHY WHY WHY GOD WHY\n]
+unless caller;
 1;
 
 
@@ -260,6 +266,16 @@ for modification:
   my $first = hash( foo => 'bar', baz => 'quux' )->inflate;
   my $second = hash( $first->DEFLATE, frobulate => 1 )->inflate;
 
+=head2 intersection
+
+  my $first  = hash(a => 1, b => 2, c => 3);
+  my $second = hash(b => 2, c => 3, d => 4);
+  my $intersection = $first->intersection($second);
+  my @common = $intersection->sort->all;
+
+Returns the list of keys common between all given hash-type objects (including
+the invocant) as an L</array_type> object.
+
 =head2 is_empty
 
 Returns boolean true if the hash has no keys.
@@ -360,6 +376,12 @@ L<List::Objects::WithUtils::Hash::Inflated>.
 =head1 SEE ALSO
 
 L<List::Objects::WithUtils>
+
+L<List::Objects::WithUtils::Hash>
+
+L<List::Objects::WithUtils::Hash::Immutable>
+
+L<List::Objects::WithUtils::Hash::Typed>
 
 L<Data::Perl>
 

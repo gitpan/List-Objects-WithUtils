@@ -108,6 +108,7 @@ t/02_hash/exists.t
 t/02_hash/export.t
 t/02_hash/get.t
 t/02_hash/inflate.t
+t/02_hash/intersection.t
 t/02_hash/is_empty.t
 t/02_hash/keys.t
 t/02_hash/kv.t

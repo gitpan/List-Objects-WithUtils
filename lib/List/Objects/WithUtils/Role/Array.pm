@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '2.002005';
+  $List::Objects::WithUtils::Role::Array::VERSION = '2.003001';
 }
 use strictures 1;
 
@@ -24,6 +24,8 @@ Regarding blessed_or_pkg():
 This is some nonsense to support autoboxing; if we aren't blessed, we're
 autoboxed, in which case we appear to have no choice but to cheap out and
 return the basic array type.
+
+(Relatedly, new() methods should be able to operate on a blessed invocant.)
 
 =end comment
 
@@ -93,17 +95,9 @@ sub type {
   # array() has an empty ->type
 }
 
-sub new {
-  if (my $blessed = Scalar::Util::blessed $_[0]) {
-    return bless [ @_[1 .. $#_] ], $blessed
-  }
-  bless [ @_[1 .. $#_] ], $_[0]
-}
+sub new { bless [ @_[1 .. $#_ ] ], Scalar::Util::blessed($_[0]) || $_[0] }
 
-sub copy {
-  my ($self) = @_;
-  blessed_or_pkg($self)->new(@$self);
-}
+sub copy { blessed_or_pkg($_[0])->new(@{ $_[0] }) }
 
 sub inflate {
   my ($self) = @_;
@@ -134,7 +128,7 @@ sub end { $#{ $_[0] } }
   *elements  = *all;
 }
 
-sub is_empty { CORE::scalar @{ $_[0] } ? 0 : 1 }
+sub is_empty { ! @{ $_[0] } }
 
 sub get { $_[0]->[ $_[1] ] }
 sub set { $_[0]->[ $_[1] ] = $_[2] ; $_[0] }
@@ -235,30 +229,23 @@ sub sort {
 }
 
 sub reverse {
-  blessed_or_pkg($_[0])->new(
-    CORE::reverse @{ $_[0] }
-  )
+  blessed_or_pkg($_[0])->new( CORE::reverse @{ $_[0] } )
 }
 
 sub sliced {
-  blessed_or_pkg($_[0])->new(
-    @{ $_[0] }[ @_[1 .. $#_] ]
-  )
+  blessed_or_pkg($_[0])->new( @{ $_[0] }[ @_[1 .. $#_] ] )
 }
 
 sub splice {
   blessed_or_pkg($_[0])->new(
-    @_ == 2 ? CORE::splice(@{ $_[0] }, $_[1])
-    : CORE::splice(@{ $_[0] }, $_[1], $_[2], @_[3 .. $#_])
+    @_ == 2 ? CORE::splice( @{ $_[0] }, $_[1] )
+      : CORE::splice( @{ $_[0] }, $_[1], $_[2], @_[3 .. $#_] )
   )
 }
 
 sub has_any {
-  unless (defined $_[1]) {
-    return CORE::scalar @{ $_[0] }
-  }
-
-  &List::MoreUtils::any( $_[1], @{ $_[0] } )
+  defined $_[1] ? &List::MoreUtils::any( $_[1], @{ $_[0] } )
+    : !! @{ $_[0] }
 }
 
 sub first { 
@@ -935,11 +922,11 @@ L<List::Objects::WithUtils>
 
 L<List::Objects::WithUtils::Array>
 
-L<List::Objects::WithUtils::Role::Array::WithJunctions>
-
 L<List::Objects::WithUtils::Array::Immutable>
 
 L<List::Objects::WithUtils::Array::Typed>
+
+L<List::Objects::WithUtils::Role::Array::WithJunctions>
 
 L<Data::Perl>
 
