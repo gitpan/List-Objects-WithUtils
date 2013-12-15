@@ -8,6 +8,7 @@ README
 README.mkdn
 dist.ini
 examples/blog-post-list-objects.mkdn
+examples/calc.pl
 examples/cheap_accessors.pl
 examples/lotto.pl
 examples/pairs_to_objs.pl
@@ -83,6 +84,8 @@ t/01_array/push.t
 t/01_array/random.t
 t/01_array/reduce.t
 t/01_array/reverse.t
+t/01_array/rotate.t
+t/01_array/rotate_in_place.t
 t/01_array/set.t
 t/01_array/shift.t
 t/01_array/shuffle.t
