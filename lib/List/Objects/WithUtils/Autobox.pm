@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Autobox;
 {
-  $List::Objects::WithUtils::Autobox::VERSION = '2.004001';
+  $List::Objects::WithUtils::Autobox::VERSION = '2.004002';
 }
 use strictures 1;
 require Carp;

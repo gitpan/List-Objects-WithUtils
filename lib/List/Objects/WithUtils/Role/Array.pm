@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '2.004001';
+  $List::Objects::WithUtils::Role::Array::VERSION = '2.004002';
 }
 use strictures 1;
 
@@ -8,7 +8,20 @@ use Carp ();
 
 use List::Util ();
 use List::MoreUtils ();
-use List::UtilsBy ();
+
+{ 
+  if (eval {; require List::UtilsBy::XS; 1 } && !$@) {
+    *__sort_by  = *List::UtilsBy::XS::sort_by;
+    *__nsort_by = *List::UtilsBy::XS::nsort_by;
+    *__uniq_by  = *List::UtilsBy::XS::uniq_by;
+  } else {
+    require List::UtilsBy;
+     *__sort_by  = *List::UtilsBy::sort_by;
+     *__nsort_by = *List::UtilsBy::nsort_by;
+     *__uniq_by  = *List::UtilsBy::uniq_by;
+  }
+
+}
 
 use Module::Runtime ();
 
@@ -372,19 +385,19 @@ sub uniq {
 
 sub sort_by {
   blessed_or_pkg($_[0])->new(
-    &List::UtilsBy::sort_by( $_[1], @{ $_[0] } )
+    __sort_by( $_[1], @{ $_[0] } )
   )
 }
 
 sub nsort_by {
   blessed_or_pkg($_[0])->new(
-    &List::UtilsBy::nsort_by( $_[1], @{ $_[0] } )
+    __nsort_by( $_[1], @{ $_[0] } )
   )
 }
 
 sub uniq_by {
   blessed_or_pkg($_[0])->new(
-    &List::UtilsBy::uniq_by( $_[1], @{ $_[0] } )
+    __uniq_by( $_[1], @{ $_[0] } )
   )
 }
 
@@ -928,6 +941,8 @@ Returns a new array object consisting of the list of elements sorted via a
 stringy comparison using the given sub. 
 See L<List::UtilsBy>.
 
+Uses L<List::UtilsBy::XS> if available.
+
 =head3 nsort_by
 
 Like L</sort_by>, but using numerical comparison.
@@ -950,6 +965,8 @@ array.
 
 Returns a new array object consisting of the list of elements for which the
 given sub returns unique values.
+
+Uses L<List::UtilsBy::XS> if available; falls back to L<List::UtilsBy> if not.
 
 =head1 SEE ALSO
 

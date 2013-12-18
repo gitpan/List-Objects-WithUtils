@@ -21,6 +21,7 @@ my @modules = qw(
   List::MoreUtils
   List::Util
   List::UtilsBy
+  List::UtilsBy::XS
   Module::Runtime
   Role::Tiny
   Scalar::Util

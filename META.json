@@ -31,6 +31,7 @@
       },
       "runtime" : {
          "recommends" : {
+            "List::UtilsBy::XS" : "0.03",
             "Type::Tiny" : "0.022"
          },
          "requires" : {
@@ -68,6 +69,6 @@
          "web" : "git://github.com/avenj/list-objects-withutils"
       }
    },
-   "version" : "2.004001"
+   "version" : "2.004002"
 }
 
