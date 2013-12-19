@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Hash::Inflated;
 {
-  $List::Objects::WithUtils::Hash::Inflated::VERSION = '2.004002';
+  $List::Objects::WithUtils::Hash::Inflated::VERSION = '2.004003';
 }
 use strictures 1;
 use Carp ();

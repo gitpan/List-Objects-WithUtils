@@ -101,6 +101,7 @@ t/01_array/unbless.t
 t/01_array/uniq.t
 t/01_array/uniq_by.t
 t/01_array/unshift.t
+t/01_array/utilsby_no_xs.t
 t/02_hash/array_type.t
 t/02_hash/autobox.t
 t/02_hash/clear.t

@@ -18,6 +18,7 @@ my @modules = qw(
   Class::Method::Modifiers
   Exporter
   ExtUtils::MakeMaker
+  JSON::PP
   List::MoreUtils
   List::Util
   List::UtilsBy
@@ -26,6 +27,7 @@ my @modules = qw(
   Role::Tiny
   Scalar::Util
   Test::More
+  Test::Without::Module
   Type::Tie
   Type::Tiny
   autobox

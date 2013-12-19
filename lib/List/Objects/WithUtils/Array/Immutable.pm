@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Array::Immutable;
 {
-  $List::Objects::WithUtils::Array::Immutable::VERSION = '2.004002';
+  $List::Objects::WithUtils::Array::Immutable::VERSION = '2.004003';
 }
 use strictures 1;
 

@@ -54,7 +54,9 @@
       "test" : {
          "recommends" : {
             "CPAN::Meta" : "0",
-            "CPAN::Meta::Requirements" : "0"
+            "CPAN::Meta::Requirements" : "0",
+            "JSON::PP" : "0",
+            "Test::Without::Module" : "0"
          },
          "requires" : {
             "Test::More" : "0.88"
@@ -69,6 +71,6 @@
          "web" : "git://github.com/avenj/list-objects-withutils"
       }
    },
-   "version" : "2.004002"
+   "version" : "2.004003"
 }
 

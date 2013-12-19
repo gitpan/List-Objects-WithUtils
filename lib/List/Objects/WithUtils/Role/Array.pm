@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '2.004002';
+  $List::Objects::WithUtils::Role::Array::VERSION = '2.004003';
 }
 use strictures 1;
 
@@ -9,23 +9,23 @@ use Carp ();
 use List::Util ();
 use List::MoreUtils ();
 
-{ 
-  if (eval {; require List::UtilsBy::XS; 1 } && !$@) {
-    *__sort_by  = *List::UtilsBy::XS::sort_by;
-    *__nsort_by = *List::UtilsBy::XS::nsort_by;
-    *__uniq_by  = *List::UtilsBy::XS::uniq_by;
-  } else {
-    require List::UtilsBy;
-     *__sort_by  = *List::UtilsBy::sort_by;
-     *__nsort_by = *List::UtilsBy::nsort_by;
-     *__uniq_by  = *List::UtilsBy::uniq_by;
-  }
-
-}
-
 use Module::Runtime ();
 
 use Scalar::Util ();
+
+# This (and relevant tests) can disappear if UtilsBy gains XS:
+our $UsingUtilsByXS = 0;
+if (eval {; require List::UtilsBy::XS; 1 } && !$@) {
+  $UsingUtilsByXS = 1;
+  *__sort_by  = *List::UtilsBy::XS::sort_by;
+  *__nsort_by = *List::UtilsBy::XS::nsort_by;
+  *__uniq_by  = *List::UtilsBy::XS::uniq_by;
+} else {
+  require List::UtilsBy;
+  *__sort_by  = *List::UtilsBy::sort_by;
+  *__nsort_by = *List::UtilsBy::nsort_by;
+  *__uniq_by  = *List::UtilsBy::uniq_by;
+}
 
 =pod
 
@@ -38,7 +38,9 @@ This is some nonsense to support autoboxing; if we aren't blessed, we're
 autoboxed, in which case we appear to have no choice but to cheap out and
 return the basic array type.
 
-(Relatedly, new() methods should be able to operate on a blessed invocant.)
+This should only be called to get your hands on ->new().
+
+->new() methods should be able to operate on a blessed invocant.
 
 =end comment
 
