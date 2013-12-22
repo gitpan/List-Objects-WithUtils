@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '2.004003';
+  $List::Objects::WithUtils::VERSION = '2.005001';
 }
 use Carp;
 use strictures 1;
@@ -139,11 +139,11 @@ List::Objects::WithUtils - List objects, kitchen sink included
     ->all;   # ( 'BB', 'BC' )
 
   # Useful utilities from other list modules are available:
-  my $wanted = array(
+  my $want_idx = array(
     +{ id => '400', user => 'bob' },
     +{ id => '600', user => 'suzy' },
     +{ id => '700', user => 'fred' },
-  )->first(sub { $_->{id} > 500 });
+  )->first_index(sub { $_->{id} > 500 });
 
   my $itr = array( 1 .. 7 )->natatime(3);
   while ( my @nextset = $itr->() ) {

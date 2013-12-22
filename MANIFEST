@@ -56,14 +56,15 @@ t/01_array/count.t
 t/01_array/delete.t
 t/01_array/delete_when.t
 t/01_array/end.t
-t/01_array/first.t
-t/01_array/firstidx.t
+t/01_array/first_index.t
+t/01_array/first_where.t
 t/01_array/flatten.t
 t/01_array/flatten_all.t
 t/01_array/get.t
 t/01_array/grep.t
 t/01_array/has_any.t
 t/01_array/head.t
+t/01_array/indexes.t
 t/01_array/inflate.t
 t/01_array/insert.t
 t/01_array/is_empty.t
@@ -73,6 +74,8 @@ t/01_array/items_before.t
 t/01_array/items_before_incl.t
 t/01_array/join.t
 t/01_array/kv.t
+t/01_array/last_index.t
+t/01_array/last_where.t
 t/01_array/map.t
 t/01_array/mapval.t
 t/01_array/mesh.t

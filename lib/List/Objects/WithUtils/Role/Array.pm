@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '2.004003';
+  $List::Objects::WithUtils::Role::Array::VERSION = '2.005001';
 }
 use strictures 1;
 
@@ -234,6 +234,12 @@ sub grep {
   )
 }
 
+sub indexes {
+  blessed_or_pkg($_[0])->new(
+    &List::MoreUtils::indexes($_[1], @{ $_[0] })
+  )
+}
+
 sub sort {
   if (defined $_[1]) {
     return blessed_or_pkg($_[0])->new(
@@ -263,12 +269,31 @@ sub has_any {
     : !! @{ $_[0] }
 }
 
-sub first { 
+=pod
+
+=for Pod::Coverage first
+
+=cut
+
+{ no warnings 'once'; *first = *first_where }
+sub first_where { 
   &List::Util::first( $_[1], @{ $_[0] } ) 
 }
 
+sub last_where {
+  &List::MoreUtils::lastval( $_[1], @{ $_[0] } )
+}
+
+{ no warnings 'once';
+  *first_index = *firstidx;
+  *last_index  = *lastidx;
+}
 sub firstidx { 
   &List::MoreUtils::firstidx( $_[1], @{ $_[0] } )
+}
+
+sub lastidx {
+  &List::MoreUtils::lastidx( $_[1], @{ $_[0] } )
 }
 
 sub mesh {
@@ -818,24 +843,47 @@ See: L<Types::Standard>, L<List::Objects::Types>
 
 =head3 grep
 
-  my $matched = $array->grep(sub { $_[0] =~ /foo/ });
+  my $matched = $array->grep(sub { /foo/ });
 
 Returns a new array object consisting of the list of elements for which the
-given subroutine evaluated to true. C<$_[0]> is the element being operated
+given subroutine evaluates to true. C<$_[0]> is the element being operated
 on; you can also use the topicalizer C<$_>.
 
-=head3 first
+=head3 indexes
+
+  my $matched = $array->indexes(sub { /foo/ });
+
+Like L</grep>, but returns a new array object consisting of the list of
+B<indexes> for which the given subroutine evaluates to true.
+
+=head3 first_where
 
   my $arr = array( qw/ ab bc bd de / );
-  my $first = $arr->first(sub { /^b/ });  ## 'bc'
+  my $first = $arr->first_where(sub { /^b/ });  ## 'bc'
 
 Returns the first element of the list for which the given sub evaluates to
 true. C<$_> is set to each element, in turn, until a match is found (or we run
 out of possibles).
 
+=head3 first_index
+
+Like L</first_where>, but return the index of the first successful match.
+
 =head3 firstidx
 
-Like L</first>, but return the index of the first successful match.
+An alias for L</first_index>.
+
+=head3 last_where
+
+Like L</first_where>, but returns the B<last> successful match.
+
+=head3 last_index
+
+Like L</first_index>, but returns the index of the B<last> successful match.
+
+=head3 lastidx
+
+An alias for L</last_index>.
 
 =head3 has_any
 

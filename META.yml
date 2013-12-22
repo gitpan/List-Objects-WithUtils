@@ -33,4 +33,4 @@ requires:
   strictures: 1
 resources:
   repository: git://github.com/avenj/list-objects-withutils.git
-version: 2.004003
+version: 2.005001
