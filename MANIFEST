@@ -55,6 +55,7 @@ t/01_array/copy.t
 t/01_array/count.t
 t/01_array/delete.t
 t/01_array/delete_when.t
+t/01_array/diff.t
 t/01_array/end.t
 t/01_array/first_index.t
 t/01_array/first_where.t
@@ -67,6 +68,7 @@ t/01_array/head.t
 t/01_array/indexes.t
 t/01_array/inflate.t
 t/01_array/insert.t
+t/01_array/intersection.t
 t/01_array/is_empty.t
 t/01_array/items_after.t
 t/01_array/items_after_incl.t
@@ -111,6 +113,7 @@ t/02_hash/clear.t
 t/02_hash/copy.t
 t/02_hash/defined.t
 t/02_hash/delete.t
+t/02_hash/diff.t
 t/02_hash/exists.t
 t/02_hash/export.t
 t/02_hash/get.t

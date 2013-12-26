@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '2.005001';
+  $List::Objects::WithUtils::VERSION = '2.006001';
 }
 use Carp;
 use strictures 1;
@@ -203,14 +203,11 @@ List::Objects::WithUtils - List objects, kitchen sink included
   my $obj = $hash->inflate;
   $snacks = $obj->snacks;
 
-  # Arrays ->inflate() to hash objects
-  # A (slow) set intersection:
-  my @intersect = array(1 .. 10)
-    ->map(sub { $_ => 1 })
-    ->inflate
-    ->intersection( array(5 .. 8)->map(sub { $_ => 1 })->inflate )
-    ->sort
-    ->all;
+  # Arrays ->inflate() to hash objects:
+  my $items = array( qw/ foo bar baz/ )->map(sub { $_ => 1 })->inflate;
+  if ($items->exists('foo')) {
+    # ...
+  }
 
   # Methods returning multiple values typically return new array-type objects:
   my @match_keys = $hash->keys->grep(sub { m/foo/ })->all;

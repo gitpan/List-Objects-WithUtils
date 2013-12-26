@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '2.005001';
+  $List::Objects::WithUtils::Role::Array::VERSION = '2.006001';
 }
 use strictures 1;
 
@@ -207,6 +207,24 @@ sub insert {
   $_[0] 
 }
 
+sub intersection {
+  my %seen;
+  blessed_or_pkg($_[0])->new(
+    # Well. Probably not the most efficient approach . . .
+    grep {; ++$seen{$_} > $#_ } 
+      map {; List::MoreUtils::uniq @$_ } @_
+  )
+}
+
+sub diff {
+  my %seen;
+  my @vals = map {; List::MoreUtils::uniq @$_ } @_;
+  $seen{$_}++ for @vals;
+  blessed_or_pkg($_[0])->new(
+    grep {; $seen{$_} != @_ } List::MoreUtils::uniq @vals
+  )
+}
+
 sub join { 
   CORE::join( 
     ( defined $_[1] ? $_[1] : ',' ), 
@@ -223,7 +241,7 @@ sub map {
 sub mapval {
   my ($self, $sub) = @_;
   my @copy = @$self;
-  blessed_or_pkg($_[0])->new(
+  blessed_or_pkg($self)->new(
     CORE::map {; $sub->($_); $_ } @copy
   )
 }
@@ -518,10 +536,6 @@ to provide a negative value.
 The opposite of L</is_mutable>. (Subclasses do not need to override so long as
 L</is_mutable> returns a correct value.)
 
-=head3 scalar
-
-See L</count>.
-
 =head3 inflate
 
   my $hash = $array->inflate;
@@ -541,6 +555,10 @@ The class name that objects are blessed into when calling L</inflate>;
 subclasses can override to provide their own hash-type objects.
 
 Defaults to L<List::Objects::WithUtils::Hash>.
+
+=head3 scalar
+
+See L</count>.
 
 =head3 unbless
 
@@ -725,12 +743,6 @@ Similar to L</head>, but returns either the last element and a new array-type
 object containing the remaining list (in list context), or just the last
 element of the list (in scalar context).
 
-=head3 kv
-
-Returns an array-type object containing key/value pairs as (unblessed) ARRAYs;
-this is much like L<List::Objects::WithUtils::Role::Hash/"kv">, except the
-array index is the key.
-
 =head3 join
 
   my $str = $array->join(' ');
@@ -738,6 +750,12 @@ array index is the key.
 Joins the array's elements and returns the joined string.
 
 Defaults to ',' if no delimiter is specified.
+
+=head3 kv
+
+Returns an array-type object containing key/value pairs as (unblessed) ARRAYs;
+this is much like L<List::Objects::WithUtils::Role::Hash/"kv">, except the
+array index is the key.
 
 =head3 mesh
 
@@ -898,6 +916,32 @@ of the array; see L<List::MoreUtils/"any">.
 
 C<$_> is set to the element being operated upon.
 
+=head3 intersection
+
+  my $first  = array(qw/ a b c /);
+  my $second = array(qw/ b c d /);
+  my $intersection = $first->intersection($second);
+
+Returns a new array object containing the list of values common between all
+given array-type objects (including the invocant).
+
+The new array object is not sorted in any predictable order.
+
+(It may be worth noting that an intermediate hash is used; objects that
+stringify to the same value will be taken to be the same.)
+
+=head3 diff
+
+  my $first  = array(qw/ a b c d /);
+  my $second = array(qw/ b c x /);
+  my @diff = $first->diff($second)->sort->all;  # (a, d, x)
+
+The opposite of L</intersection>; returns a new array object containing the
+list of values that are not common between all given array-type objects
+(including the invocant).
+
+The same constraints as L</intersection> apply.
+
 =head3 items_after
 
   my $after = array( 1 .. 10 )->items_after(sub { $_ == 5 });
@@ -1003,6 +1047,11 @@ Like L</sort_by>, but using numerical comparison.
 
 Returns a new array object containing only unique elements from the original
 array.
+
+(It may be worth noting that this takes place via an intermediate hash;
+objects that stringify to the same value are not unique, even if they are
+different objects. L</uniq_by> plus L<Scalar::Util/"refaddr"> may help you
+there.)
 
 =head3 uniq_by
 
