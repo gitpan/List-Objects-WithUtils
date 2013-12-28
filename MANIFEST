@@ -6,12 +6,15 @@ META.yml
 Makefile.PL
 README
 README.mkdn
+bench/array-constructors.pl
+bench/foreach_vs_visit.pl
 dist.ini
 examples/blog-post-list-objects.mkdn
 examples/calc.pl
 examples/cheap_accessors.pl
 examples/lotto.pl
 examples/pairs_to_objs.pl
+examples/typed_autovivification.pl
 lib/List/Objects/WithUtils.pm
 lib/List/Objects/WithUtils/Array.pm
 lib/List/Objects/WithUtils/Array/Immutable.pm
@@ -91,6 +94,7 @@ t/01_array/reduce.t
 t/01_array/reverse.t
 t/01_array/rotate.t
 t/01_array/rotate_in_place.t
+t/01_array/rotator.t
 t/01_array/set.t
 t/01_array/shift.t
 t/01_array/shuffle.t
@@ -107,6 +111,7 @@ t/01_array/uniq.t
 t/01_array/uniq_by.t
 t/01_array/unshift.t
 t/01_array/utilsby_no_xs.t
+t/01_array/visit.t
 t/02_hash/array_type.t
 t/02_hash/autobox.t
 t/02_hash/clear.t
@@ -123,6 +128,7 @@ t/02_hash/is_empty.t
 t/02_hash/keys.t
 t/02_hash/kv.t
 t/02_hash/kv_sort.t
+t/02_hash/maybe_set.t
 t/02_hash/set.t
 t/02_hash/sliced.t
 t/02_hash/subclassed.t

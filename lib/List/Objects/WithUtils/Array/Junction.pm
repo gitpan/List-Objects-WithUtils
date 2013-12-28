@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Array::Junction;
 {
-  $List::Objects::WithUtils::Array::Junction::VERSION = '2.006001';
+  $List::Objects::WithUtils::Array::Junction::VERSION = '2.007001';
 }
 
 { package 

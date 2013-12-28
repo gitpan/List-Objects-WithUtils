@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash::Immutable;
 {
-  $List::Objects::WithUtils::Role::Hash::Immutable::VERSION = '2.006001';
+  $List::Objects::WithUtils::Role::Hash::Immutable::VERSION = '2.007001';
 }
 use strictures 1;
 use Carp ();
@@ -17,6 +17,7 @@ sub _make_unimp {
 our @ImmutableMethods = qw/
   clear
   set
+  maybe_set
   delete
 /;
 
@@ -73,6 +74,7 @@ The following methods are not available and will throw an exception:
 
   clear
   set
+  maybe_set
   delete
 
 (The backing hash is also marked read-only.)

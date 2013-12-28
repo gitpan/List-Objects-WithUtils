@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array::Typed;
 {
-  $List::Objects::WithUtils::Role::Array::Typed::VERSION = '2.006001';
+  $List::Objects::WithUtils::Role::Array::Typed::VERSION = '2.007001';
 }
 use strictures 1;
 

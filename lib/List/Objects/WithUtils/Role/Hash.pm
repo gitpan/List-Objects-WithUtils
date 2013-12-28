@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '2.006001';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '2.007001';
 }
 use strictures 1;
 
@@ -93,6 +93,14 @@ sub set {
 
   @{$self}{ @_[@keysidx] } = @_[@valsidx];
 
+  $self
+}
+
+sub maybe_set {
+  my $self = shift;
+  for (grep {; not $_ % 2 } 0 .. $#_) {
+    $self->{ $_[$_] } = $_[$_ + 1] unless exists $self->{ $_[$_] }
+  }
   $self
 }
 
@@ -359,6 +367,16 @@ Sets keys in the hash.
 
 As of version 1.007, returns the current hash object.
 The return value of prior versions is unreliable.
+
+=head2 maybe_set
+
+  my $hash = hash(foo => 1, bar => 2, baz => 3);
+  $hash->maybe_set(foo => 2, bar => 3, quux => 4);
+  # $hash = +{ foo => 1, bar => 2, baz => 3, quux => 4 }
+
+Like L</set>, but only sets values that do not already exist in the hash.
+
+Returns the hash object.
 
 =head2 sliced
 

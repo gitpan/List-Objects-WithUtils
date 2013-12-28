@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array::TiedRO;
 {
-  $List::Objects::WithUtils::Role::Array::TiedRO::VERSION = '2.006001';
+  $List::Objects::WithUtils::Role::Array::TiedRO::VERSION = '2.007001';
 }
 use strictures 1;
 use Carp ();
