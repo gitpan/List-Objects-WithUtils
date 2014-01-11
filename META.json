@@ -39,7 +39,7 @@
             "Class::Method::Modifiers" : "0",
             "Exporter" : "0",
             "List::MoreUtils" : "0.33",
-            "List::Util" : "1.18",
+            "List::Util" : "1.32",
             "List::UtilsBy" : "0.09",
             "Module::Runtime" : "0.013",
             "Role::Tiny" : "1.003",
@@ -71,6 +71,6 @@
          "web" : "git://github.com/avenj/list-objects-withutils"
       }
    },
-   "version" : "2.007001"
+   "version" : "2.008001"
 }
 

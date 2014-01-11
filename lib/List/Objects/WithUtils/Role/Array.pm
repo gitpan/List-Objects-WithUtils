@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array;
 {
-  $List::Objects::WithUtils::Role::Array::VERSION = '2.007001';
+  $List::Objects::WithUtils::Role::Array::VERSION = '2.008001';
 }
 use strictures 1;
 
@@ -57,23 +57,22 @@ sub blessed_or_pkg {
 
 
 sub __flatten_all {
-  ref $_[0] eq 'ARRAY' 
-  || Scalar::Util::blessed($_[0]) 
-     # 5.8 doesn't have ->DOES()
-     && $_[0]->can('does')
-     && $_[0]->does('List::Objects::WithUtils::Role::Array') ?
-     map {; __flatten_all($_) } @{ $_[0] }
-  : $_[0]
+  # __flatten optimized for max depth:
+  ref $_[0] eq 'ARRAY' || Scalar::Util::blessed($_[0]) 
+      # 5.8 doesn't have ->DOES()
+      && $_[0]->can('does') 
+      && $_[0]->does('List::Objects::WithUtils::Role::Array') ?
+        map {; __flatten_all($_) } @{ $_[0] }
+    : $_[0]
 }
 
 sub __flatten {
   my $depth = shift;
   CORE::map {
-    ref eq 'ARRAY' 
-    || Scalar::Util::blessed($_)
-       && $_->can('does')
-       && $_->does('List::Objects::WithUtils::Role::Array') ?
-      $depth > 0 ? __flatten( $depth - 1, @$_ ) : $_
+    ref eq 'ARRAY' || Scalar::Util::blessed($_)
+        && $_->can('does')
+        && $_->does('List::Objects::WithUtils::Role::Array') ?
+          $depth > 0 ? __flatten( $depth - 1, @$_ ) : $_
       : $_
   } @_
 }
@@ -128,6 +127,9 @@ sub unbless { [ @{ $_[0] } ] }
 
 sub validated {
   my ($self, $type) = @_;
+  # Autoboxed?
+  $self = blessed_or_pkg($self)->new(@$self)
+    unless Scalar::Util::blessed $self;
   blessed_or_pkg($_[0])->new(
     CORE::map {; $self->_try_coerce($type, $_) } @$self
   )
@@ -213,8 +215,8 @@ sub intersection {
   my %seen;
   blessed_or_pkg($_[0])->new(
     # Well. Probably not the most efficient approach . . .
-    grep {; ++$seen{$_} > $#_ } 
-      map {; List::MoreUtils::uniq @$_ } @_
+    CORE::grep {; ++$seen{$_} > $#_ } 
+      CORE::map {; List::MoreUtils::uniq @$_ } @_
   )
 }
 
@@ -223,7 +225,7 @@ sub diff {
   my @vals = map {; List::MoreUtils::uniq @$_ } @_;
   $seen{$_}++ for @vals;
   blessed_or_pkg($_[0])->new(
-    grep {; $seen{$_} != @_ } List::MoreUtils::uniq @vals
+    CORE::grep {; $seen{$_} != @_ } List::MoreUtils::uniq @vals
   )
 }
 
@@ -259,6 +261,14 @@ sub grep {
   )
 }
 
+
+=pod
+
+=for Pod::Coverage indices
+
+=cut
+
+{ no warnings 'once'; *indices = *indexes; }
 sub indexes {
   blessed_or_pkg($_[0])->new(
     &List::MoreUtils::indexes($_[1], @{ $_[0] })
@@ -278,6 +288,13 @@ sub reverse {
   blessed_or_pkg($_[0])->new( CORE::reverse @{ $_[0] } )
 }
 
+=pod
+
+=for Pod::Coverage slice
+
+=cut
+
+{ no warnings 'once'; *slice = *sliced }
 sub sliced {
   blessed_or_pkg($_[0])->new( @{ $_[0] }[ @_[1 .. $#_] ] )
 }
@@ -374,6 +391,11 @@ sub bisect {
 sub tuples {
   my ($self, $size, $type) = @_;
   $size = 2 unless defined $size;
+  if (defined $type) {
+    # Autoboxed? Need to be blessed if we're to _try_coerce
+    $self = blessed_or_pkg($self)->new(@$self)
+      unless Scalar::Util::blessed $self;
+  }
   Carp::confess "Expected a positive integer size but got $size"
     if $size < 1;
   my $itr = List::MoreUtils::natatime($size, @$self);
@@ -1028,6 +1050,7 @@ bundled group.
   $rot->();  ## 'cat'
   $rot->();  ## 'sheep'
   $rot->();  ## 'mouse'
+  $rot->();  ## 'cat'
 
 Returns an iterator that, when called, produces the next element in the array;
 when there are no elements left, the iterator returns to the start of the

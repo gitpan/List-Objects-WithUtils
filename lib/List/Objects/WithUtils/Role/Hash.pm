@@ -1,11 +1,12 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '2.007001';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '2.008001';
 }
 use strictures 1;
 
 use Module::Runtime ();
-use Scalar::Util ();
+use Scalar::Util    ();
+use List::Util      ();
 use List::MoreUtils ();
 
 =pod
@@ -76,6 +77,13 @@ sub get {
   $_[0]->{ $_[1] }
 }
 
+=pod
+
+=for Pod::Coverage slice
+
+=cut
+
+{ no warnings 'once'; *slice = *sliced; }
 sub sliced {
   blessed_or_pkg($_[0])->new(
     map {;
@@ -154,6 +162,12 @@ sub kv_sort {
   }
   blessed_or_pkg($_[0])->array_type->new(
     map {; [ $_, $_[0]->{ $_ } ] } CORE::sort( CORE::keys %{ $_[0] } )
+  )
+}
+
+sub kv_map {
+  blessed_or_pkg($_[0])->array_type->new(
+    List::Util::pairmap {; $_[1]->($a, $b) } %{ $_[0] }
   )
 }
 
@@ -339,6 +353,16 @@ Returns the list of values in the hash as an L</array_type> object.
 
 Returns an L</array_type> object containing the key/value pairs in the HASH,
 each of which is a two-element ARRAY.
+
+=head2 kv_map
+
+  # Add 1 to each value, get back an array-type object:
+  my $kvs = hash(a => 2, b => 2, c => 3)
+    ->kv_map(sub { ($_[0], $_[1] + 1) });
+
+Like C<map>, but operates on pairs. See L<List::Util/"pairmap">. 
+
+Returns an L</array_type> object containing the results of the map.
 
 =head2 kv_sort
 

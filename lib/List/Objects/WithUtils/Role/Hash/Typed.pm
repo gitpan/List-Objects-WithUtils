@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash::Typed;
 {
-  $List::Objects::WithUtils::Role::Hash::Typed::VERSION = '2.007001';
+  $List::Objects::WithUtils::Role::Hash::Typed::VERSION = '2.008001';
 }
 use strictures 1;
 
@@ -28,7 +28,7 @@ around new => sub {
     && $type->isa('Type::Tiny');
 
   my $self = {};
-  tie(%$self, 'Type::Tie::HASH', $type);
+  tie %$self, 'Type::Tie::HASH', $type;
   %$self = @_;
   bless $self, $class;
 };

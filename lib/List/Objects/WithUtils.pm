@@ -1,6 +1,6 @@
 package List::Objects::WithUtils;
 {
-  $List::Objects::WithUtils::VERSION = '2.007001';
+  $List::Objects::WithUtils::VERSION = '2.008001';
 }
 use Carp;
 use strictures 1;
@@ -62,9 +62,9 @@ sub import {
   $pkg = caller unless defined $pkg;
   my @failed;
   for my $mod (@mods) {
-    my $c = "package $pkg; use $mod;";
-    local $@; eval $c;
-    if ($@) { carp $@; push @failed, $mod }
+    my $c = "package $pkg; use $mod; 1;";
+    local $@;
+    eval $c and not $@ or carp $@ and push @failed, $mod;
   }
 
   if (@failed) {

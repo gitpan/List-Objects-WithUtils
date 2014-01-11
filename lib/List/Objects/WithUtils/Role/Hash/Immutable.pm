@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash::Immutable;
 {
-  $List::Objects::WithUtils::Role::Hash::Immutable::VERSION = '2.007001';
+  $List::Objects::WithUtils::Role::Hash::Immutable::VERSION = '2.008001';
 }
 use strictures 1;
 use Carp ();

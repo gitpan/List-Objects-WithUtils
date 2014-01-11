@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Array::Typed;
 {
-  $List::Objects::WithUtils::Role::Array::Typed::VERSION = '2.007001';
+  $List::Objects::WithUtils::Role::Array::Typed::VERSION = '2.008001';
 }
 use strictures 1;
 
@@ -29,7 +29,7 @@ around new => sub {
     && $type->isa('Type::Tiny');
 
   my $self = [];
-  tie(@$self, 'Type::Tie::ARRAY', $type);
+  tie @$self, 'Type::Tie::ARRAY', $type;
   push @$self, @_;
   bless $self, $class;
 };
