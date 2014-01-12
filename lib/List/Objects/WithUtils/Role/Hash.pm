@@ -1,6 +1,6 @@
 package List::Objects::WithUtils::Role::Hash;
 {
-  $List::Objects::WithUtils::Role::Hash::VERSION = '2.008001';
+  $List::Objects::WithUtils::Role::Hash::VERSION = '2.008002';
 }
 use strictures 1;
 
@@ -166,8 +166,9 @@ sub kv_sort {
 }
 
 sub kv_map {
-  blessed_or_pkg($_[0])->array_type->new(
-    List::Util::pairmap {; $_[1]->($a, $b) } %{ $_[0] }
+  my ($self, $sub) = @_;
+  blessed_or_pkg($self)->array_type->new(
+    List::Util::pairmap {; $sub->($a, $b) } %$self
   )
 }
 
