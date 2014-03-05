@@ -1,7 +1,5 @@
 package List::Objects::WithUtils;
-{
-  $List::Objects::WithUtils::VERSION = '2.008002';
-}
+$List::Objects::WithUtils::VERSION = '2.009001';
 use Carp;
 use strictures 1;
 
@@ -199,15 +197,15 @@ List::Objects::WithUtils - List objects, kitchen sink included
   # consisting of the retrieved key/value pairs:
   my $slice = $hash->sliced('foo', 'pie');
 
-  # Hashes inflate to simple objects with accessors:
-  my $obj = $hash->inflate;
-  $snacks = $obj->snacks;
-
-  # Arrays ->inflate() to hash objects:
+  # Arrays inflate to hash objects:
   my $items = array( qw/ foo bar baz/ )->map(sub { $_ => 1 })->inflate;
   if ($items->exists('foo')) {
     # ...
   }
+
+  # Hashes inflate to simple objects with accessors:
+  my $obj = $hash->inflate;
+  $snacks = $obj->snacks;
 
   # Methods returning multiple values typically return new array-type objects:
   my @match_keys = $hash->keys->grep(sub { m/foo/ })->all;

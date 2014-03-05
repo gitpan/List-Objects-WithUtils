@@ -1,7 +1,5 @@
 package List::Objects::WithUtils::Role::Hash::Typed;
-{
-  $List::Objects::WithUtils::Role::Hash::Typed::VERSION = '2.008002';
-}
+$List::Objects::WithUtils::Role::Hash::Typed::VERSION = '2.009001';
 use strictures 1;
 
 use Carp ();

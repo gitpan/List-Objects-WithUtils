@@ -1,7 +1,5 @@
 package List::Objects::WithUtils::Role::Array;
-{
-  $List::Objects::WithUtils::Role::Array::VERSION = '2.008002';
-}
+$List::Objects::WithUtils::Role::Array::VERSION = '2.009001';
 use strictures 1;
 
 use Carp ();
@@ -948,7 +946,7 @@ An alias for L</last_index>.
     ...
   }
 
-If passed no arguments, returns the same thing as L</count>.
+If passed no arguments, returns boolean true if the array has any elements.
 
 If passed a sub, returns boolean true if the sub is true for any element
 of the array; see L<List::MoreUtils/"any">.

@@ -1,7 +1,5 @@
 package List::Objects::WithUtils::Role::Hash;
-{
-  $List::Objects::WithUtils::Role::Hash::VERSION = '2.008002';
-}
+$List::Objects::WithUtils::Role::Hash::VERSION = '2.009001';
 use strictures 1;
 
 use Module::Runtime ();
@@ -145,6 +143,11 @@ sub diff {
   blessed_or_pkg($_[0])->array_type->new(
     grep {; $seen{$_} != @_ } List::MoreUtils::uniq @vals
   )
+}
+
+sub iter {
+  my @list = %{ $_[0] };
+  sub { splice @list, 0, 2 }
 }
 
 sub kv {
@@ -346,13 +349,25 @@ Returns the list of keys in the hash as an L</array_type> object.
 
 Returns the list of values in the hash as an L</array_type> object.
 
+=head2 iter
+
+  my $iter = $hash->iter;
+  while (my ($key, $val) = $iter->()) {
+    # ...
+  }
+
+Returns an iterator that, when called, returns ($key, $value) pairs.
+
+The iterator operates on a shallow clone of the current hash, making it
+(relatively) safe to operate on the original hash while using the iterator.
+
 =head2 kv
 
   for my $pair ($hash->kv->all) {
     my ($key, $val) = @$pair;
   }
 
-Returns an L</array_type> object containing the key/value pairs in the HASH,
+Returns an L</array_type> object containing the key/value pairs in the hash,
 each of which is a two-element ARRAY.
 
 =head2 kv_map
