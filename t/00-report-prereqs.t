@@ -67,7 +67,6 @@ my $static_prereqs = do { my $x = {
                                       'Carp' => '0',
                                       'Class::Method::Modifiers' => '0',
                                       'Exporter' => '0',
-                                      'List::MoreUtils' => '0.33',
                                       'List::Util' => '1.32',
                                       'List::UtilsBy' => '0.09',
                                       'Module::Runtime' => '0.013',

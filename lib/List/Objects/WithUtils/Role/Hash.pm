@@ -1,11 +1,10 @@
 package List::Objects::WithUtils::Role::Hash;
-$List::Objects::WithUtils::Role::Hash::VERSION = '2.009001';
+$List::Objects::WithUtils::Role::Hash::VERSION = '2.010001';
 use strictures 1;
 
 use Module::Runtime ();
 use Scalar::Util    ();
 use List::Util      ();
-use List::MoreUtils ();
 
 =pod
 
@@ -129,19 +128,20 @@ sub values {
 }
 
 sub intersection {
-  my %seen;
+  my %seen; my %inner;
   blessed_or_pkg($_[0])->array_type->new(
-    List::MoreUtils::uniq
-      grep {; ++$seen{$_} > $#_ } map {; CORE::keys %$_ } @_
+    grep {; not $seen{$_}++ }
+      grep {; ++$inner{$_} > $#_ } map {; CORE::keys %$_ } @_
   )
 }
 
 sub diff {
-  my %seen;
+  my %seen; my %inner;
   my @vals = map {; CORE::keys %$_ } @_;
   $seen{$_}++ for @vals;
   blessed_or_pkg($_[0])->array_type->new(
-    grep {; $seen{$_} != @_ } List::MoreUtils::uniq @vals
+    grep {; $seen{$_} != @_ } 
+      grep {; not $inner{$_}++ } @vals
   )
 }
 

@@ -1,5 +1,5 @@
 package List::Objects::WithUtils;
-$List::Objects::WithUtils::VERSION = '2.009001';
+$List::Objects::WithUtils::VERSION = '2.010001';
 use Carp;
 use strictures 1;
 
@@ -397,12 +397,19 @@ Junctions are adapted from L<Perl6::Junction> by Carl Franks (CPAN: CFRANKS)
 Most of the type-checking code and other useful additions were contributed by
 Toby Inkster (CPAN: TOBYINK)
 
-Much of this code simply wraps other widely-used modules, including:
+Much of this code simply wraps other widely-used modules, especially:
 
 L<List::Util>
 
-L<List::MoreUtils>
-
 L<List::UtilsBy>
+
+L<Type::Tiny>
+
+Inspiration for a few pieces comes from the "classic" (version 0.33)
+L<List::MoreUtils>. The development versions (0.4+) are going places I
+don't fully understand, so MoreUtils was dropped from the required dependency 
+chain in Lowu-2.10 and will be reevaluated later. Users with 0.3x versions of
+L<List::MoreUtils> will see a significant performance boost in performing
+certain array operations.
 
 =cut

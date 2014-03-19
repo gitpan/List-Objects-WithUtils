@@ -1,11 +1,10 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.009001';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.010001';
 use strictures 1;
 
 use Carp ();
 
 use List::Util ();
-use List::MoreUtils ();
 
 use Module::Runtime ();
 
@@ -26,6 +25,11 @@ our $UsingUtilsByXS = 0;
     *__uniq_by  = *List::UtilsBy::uniq_by;
   }
 }
+
+use constant USING_LIST_MOREUTILS => !! eval {;
+  require List::MoreUtils;
+  (List::MoreUtils->VERSION || '') =~ /^0.3/
+};
 
 =pod
 
@@ -101,7 +105,7 @@ sub _try_coerce {
 
 =pod
 
-=for Pod::Coverage TO_JSON type
+=for Pod::Coverage TO_JSON damn type
 
 =cut
 
@@ -121,7 +125,7 @@ sub inflate {
 }
 
 sub unbless { [ @{ $_[0] } ] }
-{ no warnings 'once'; *TO_JSON = *unbless; }
+{ no warnings 'once'; *TO_JSON = *unbless; *damn = *unbless; }
 
 sub validated {
   my ($self, $type) = @_;
@@ -214,16 +218,22 @@ sub intersection {
   blessed_or_pkg($_[0])->new(
     # Well. Probably not the most efficient approach . . .
     CORE::grep {; ++$seen{$_} > $#_ } 
-      CORE::map {; List::MoreUtils::uniq @$_ } @_
+      CORE::map {; 
+        my %s = (); CORE::grep {; not $s{$_}++ } @$_
+      } @_
   )
 }
 
 sub diff {
   my %seen;
-  my @vals = map {; List::MoreUtils::uniq @$_ } @_;
+  my @vals = CORE::map {; 
+    my %s = (); CORE::grep {; not $s{$_}++ } @$_
+  } @_;
   $seen{$_}++ for @vals;
+  my %inner;
   blessed_or_pkg($_[0])->new(
-    CORE::grep {; $seen{$_} != @_ } List::MoreUtils::uniq @vals
+    CORE::grep {; $seen{$_} != @_ }
+      CORE::grep {; not $inner{$_}++ } @vals
   )
 }
 
@@ -269,7 +279,8 @@ sub grep {
 { no warnings 'once'; *indices = *indexes; }
 sub indexes {
   blessed_or_pkg($_[0])->new(
-    &List::MoreUtils::indexes($_[1], @{ $_[0] })
+    USING_LIST_MOREUTILS ? &List::MoreUtils::indexes( $_[1], @{ $_[0] } )
+      : grep {; local *_ = \$_[0]->[$_]; $_[1]->() } 0 .. $#{ $_[0] }
   )
 }
 
@@ -305,7 +316,7 @@ sub splice {
 }
 
 sub has_any {
-  defined $_[1] ? &List::MoreUtils::any( $_[1], @{ $_[0] } )
+  defined $_[1] ? !! &List::Util::first( $_[1], @{ $_[0] } )
     : !! @{ $_[0] }
 }
 
@@ -316,12 +327,21 @@ sub has_any {
 =cut
 
 { no warnings 'once'; *first = *first_where }
-sub first_where { 
-  &List::Util::first( $_[1], @{ $_[0] } ) 
-}
+sub first_where { &List::Util::first( $_[1], @{ $_[0] } ) }
 
 sub last_where {
-  &List::MoreUtils::lastval( $_[1], @{ $_[0] } )
+  my ($self, $cb) = @_;
+
+  return &List::MoreUtils::lastval($cb, @$self) if USING_LIST_MOREUTILS;
+
+  my $i = @$self;
+  while ($i--) {
+    local *_ = \$self->[$i];
+    my $ret = $cb->();
+    $self->[$i] = $_;
+    return $_ if $ret;
+  }
+  undef
 }
 
 { no warnings 'once';
@@ -329,11 +349,27 @@ sub last_where {
   *last_index  = *lastidx;
 }
 sub firstidx { 
-  &List::MoreUtils::firstidx( $_[1], @{ $_[0] } )
+  my ($self, $cb) = @_;
+
+  return &List::MoreUtils::firstidx($cb, @$self) if USING_LIST_MOREUTILS;
+
+  for my $i (0 .. $#$self) {
+    local *_ = \$self->[$i];
+    return $i if $cb->();
+  }
+  -1
 }
 
 sub lastidx {
-  &List::MoreUtils::lastidx( $_[1], @{ $_[0] } )
+  my ($self, $cb) = @_;
+
+  return &List::MoreUtils::lastidx($cb, @$self) if USING_LIST_MOREUTILS;
+
+  for my $i (CORE::reverse 0 .. $#$self) {
+    local *_ = \$self->[$i];
+    return $i if $cb->(); 
+  }
+  -1
 }
 
 sub mesh {
@@ -347,7 +383,9 @@ sub mesh {
 }
 
 sub natatime {
-  my $itr = List::MoreUtils::natatime($_[1], @{ $_[0] } );
+  my @list  = @{ $_[0] };
+  my $count = $_[1];
+  my $itr = sub { CORE::splice @list, 0, $count };
   if ($_[2]) {
     while (my @nxt = $itr->()) { $_[2]->(@nxt) }
   } else { 
@@ -396,7 +434,10 @@ sub tuples {
   }
   Carp::confess "Expected a positive integer size but got $size"
     if $size < 1;
-  my $itr = List::MoreUtils::natatime($size, @$self);
+  my $itr = do {
+    my @copy = @$self;
+    sub { CORE::splice @copy, 0, $size }
+  };
   my @res;
   while (my @nxt = $itr->()) {
     if (defined $type) {
@@ -430,26 +471,38 @@ sub rotate {
 sub rotate_in_place { $_[0] = $_[0]->rotate(@_[1 .. $#_]) }
 
 sub items_after {
+  my ($started, $lag);
   blessed_or_pkg($_[0])->new(
-    &List::MoreUtils::after( $_[1], @{ $_[0] } )
+    USING_LIST_MOREUTILS ? &List::MoreUtils::after($_[1], @{ $_[0] })
+      : CORE::grep $started ||= do {
+          my $x = $lag; $lag = $_[1]->(); $x
+      }, @{ $_[0] }
   )
 }
 
 sub items_after_incl {
+  my $started;
   blessed_or_pkg($_[0])->new(
-    &List::MoreUtils::after_incl( $_[1], @{ $_[0] } )
+    USING_LIST_MOREUTILS ? &List::MoreUtils::after_incl($_[1], @{ $_[0] })
+      : CORE::grep $started ||= $_[1]->(), @{ $_[0] }
   )
 }
 
 sub items_before {
+  my $more = 1;
   blessed_or_pkg($_[0])->new(
-    &List::MoreUtils::before( $_[1], @{ $_[0] } )
+    USING_LIST_MOREUTILS ? &List::MoreUtils::before($_[1], @{ $_[0] })
+      : CORE::grep $more &&= !$_[1]->(), @{ $_[0] }
   )
 }
 
 sub items_before_incl {
+  my $more = 1; my $lag = 1;
   blessed_or_pkg($_[0])->new(
-    &List::MoreUtils::before_incl( $_[1], @{ $_[0] } )
+    USING_LIST_MOREUTILS ? &List::MoreUtils::before_incl($_[1], @{ $_[0] })
+      : CORE::grep $more &&= do {
+          my $x = $lag; $lag = !$_[1]->(); $x
+      }, @{ $_[0] }
   )
 }
 
@@ -460,8 +513,10 @@ sub shuffle {
 }
 
 sub uniq {
+  my %s;
   blessed_or_pkg($_[0])->new(
-    List::MoreUtils::uniq( @{ $_[0] } )
+    USING_LIST_MOREUTILS ? &List::MoreUtils::uniq(@{ $_[0] })
+      : grep {; not $s{$_}++ } @{ $_[0] }
   )
 }
 
@@ -949,7 +1004,7 @@ An alias for L</last_index>.
 If passed no arguments, returns boolean true if the array has any elements.
 
 If passed a sub, returns boolean true if the sub is true for any element
-of the array; see L<List::MoreUtils/"any">.
+of the array.
 
 C<$_> is set to the element being operated upon.
 
@@ -1142,8 +1197,6 @@ L<List::Objects::WithUtils::Role::Array::WithJunctions>
 L<Data::Perl>
 
 L<List::Util>
-
-L<List::MoreUtils>
 
 L<List::UtilsBy>
 
