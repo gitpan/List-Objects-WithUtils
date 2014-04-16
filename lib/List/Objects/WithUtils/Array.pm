@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Array;
-$List::Objects::WithUtils::Array::VERSION = '2.010001';
+$List::Objects::WithUtils::Array::VERSION = '2.010002';
 use strictures 1;
 
 require Role::Tiny;

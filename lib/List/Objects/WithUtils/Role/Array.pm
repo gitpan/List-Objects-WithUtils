@@ -1,14 +1,11 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.010001';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.010002';
 use strictures 1;
 
-use Carp ();
-
-use List::Util ();
-
+use Carp            ();
+use List::Util      ();
 use Module::Runtime ();
-
-use Scalar::Util ();
+use Scalar::Util    ();
 
 # This (and relevant tests) can disappear if UtilsBy gains XS:
 our $UsingUtilsByXS = 0;
@@ -88,6 +85,7 @@ sub inflated_type { 'List::Objects::WithUtils::Hash' }
 sub is_mutable { 1 }
 sub is_immutable { ! $_[0]->is_mutable }
 
+# subclass-mungable (keep me under the Role::Tiny import):
 sub _try_coerce {
   my (undef, $type, @vals) = @_;
     Carp::confess "Expected a Type::Tiny type but got $type"
@@ -138,16 +136,12 @@ sub validated {
 }
 
 sub all { @{ $_[0] } }
+{ no warnings 'once'; *export = *all; *elements  = *all; }
 
 sub count { CORE::scalar @{ $_[0] } }
+{ no warnings 'once'; *scalar = *count;  }
 
 sub end { $#{ $_[0] } }
-
-{ no warnings 'once'; 
-  *scalar = *count; 
-  *export = *all;
-  *elements  = *all;
-}
 
 sub is_empty { ! @{ $_[0] } }
 
@@ -202,13 +196,14 @@ sub delete_when {
   my @removed;
   my $i = @$self;
   while ($i--) {
-    CORE::push @removed, CORE::splice @$self, $i, 1 
-      if $sub->(local $_ = $self->[$i]);
+    local *_ = \$self->[$i];
+    CORE::push @removed, CORE::splice @$self, $i, 1 if $sub->($_);
   }
   blessed_or_pkg($_[0])->new(@removed)
 }
 
 sub insert { 
+  $#{$_[0]} = ($_[1]-1) if $_[1] > $#{$_[0]};
   CORE::splice @{ $_[0] }, $_[1], 0, $_[2];
   $_[0] 
 }
@@ -305,7 +300,8 @@ sub reverse {
 
 { no warnings 'once'; *slice = *sliced }
 sub sliced {
-  blessed_or_pkg($_[0])->new( @{ $_[0] }[ @_[1 .. $#_] ] )
+  my @safe = @{ $_[0] };
+  blessed_or_pkg($_[0])->new( @safe[ @_[1 .. $#_] ] )
 }
 
 sub splice {
@@ -459,11 +455,11 @@ sub rotate {
     Carp::confess "Cannot rotate in both directions!"
   } elsif ($params{right}) {
     return blessed_or_pkg($self)->new(
-      $self->[-1], @{ $self }[0 .. ($#$self - 1)]
+      @$self ? ($self->[-1], @{ $self }[0 .. ($#$self - 1)]) : ()
     )
   } else {
     return blessed_or_pkg($self)->new(
-      @{ $self }[1 .. $#$self], $self->[0]
+      @$self ? (@{ $self }[1 .. $#$self], $self->[0]) : ()
     )
   }
 }
@@ -473,10 +469,9 @@ sub rotate_in_place { $_[0] = $_[0]->rotate(@_[1 .. $#_]) }
 sub items_after {
   my ($started, $lag);
   blessed_or_pkg($_[0])->new(
-    USING_LIST_MOREUTILS ? &List::MoreUtils::after($_[1], @{ $_[0] })
-      : CORE::grep $started ||= do {
-          my $x = $lag; $lag = $_[1]->(); $x
-      }, @{ $_[0] }
+    CORE::grep $started ||= do { 
+      my $x = $lag; $lag = $_[1]->(); $x 
+    }, @{ $_[0] }
   )
 }
 
@@ -683,7 +678,10 @@ Returns a new array object containing the deleted values (possibly none).
 
   $array->insert( $position, $value );
 
-Inserts a value at a given position.
+Inserts a value at a given position, moving the rest of the array rightwards.
+
+The array will be "backfilled" (with undefs) if $position is past the end of
+the array.
 
 Returns the array object.
 
@@ -978,6 +976,8 @@ out of possibles).
 =head3 first_index
 
 Like L</first_where>, but return the index of the first successful match.
+
+Returns -1 if no match is found.
 
 =head3 firstidx
 

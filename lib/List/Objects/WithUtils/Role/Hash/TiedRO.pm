@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Hash::TiedRO;
-$List::Objects::WithUtils::Role::Hash::TiedRO::VERSION = '2.010001';
+$List::Objects::WithUtils::Role::Hash::TiedRO::VERSION = '2.010002';
 use strictures 1;
 use Carp ();
 
