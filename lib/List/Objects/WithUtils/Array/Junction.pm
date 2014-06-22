@@ -1,6 +1,7 @@
 package List::Objects::WithUtils::Array::Junction;
+$List::Objects::WithUtils::Array::Junction::VERSION = '2.011001';
 ## no critic
-$List::Objects::WithUtils::Array::Junction::VERSION = '2.010002';
+
 { package 
     List::Objects::WithUtils::Array::Junction::Base;
   use strictures 1;

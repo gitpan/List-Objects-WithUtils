@@ -143,7 +143,7 @@ DESCRIPTION
 
     immarray is imported from List::Objects::WithUtils::Array::Immutable and
     operates much like an array, except methods that mutate the list are not
-    available; using immutable arrays promotes safer functional patterns.
+    available; using immutable arrays promotes safer programming patterns.
 
     array_of provides Type::Tiny-compatible type-checking array objects that
     can coerce and check their values as they are added; see

@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.010002';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.011001';
 use strictures 1;
 
 use Carp            ();
@@ -414,9 +414,31 @@ sub bisect {
   my @parts = ( [], [] );
   CORE::push @{ $parts[ $code->($_) ? 0 : 1 ] }, $_ for @$self;
   my $cls = blessed_or_pkg($self);
-  $cls->new(
-    map {; $cls->new(@$_) } @parts
-  )
+  $cls->new( map {; $cls->new(@$_) } @parts )
+}
+
+sub nsect {
+  my ($self, $sections) = @_;
+  my $total = scalar @$self;
+  my @parts;
+  my $x = 0;
+  $sections = $total if $sections > $total;
+  if ($sections && $total) {
+    CORE::push @{ $parts[ int($x++ * $sections / $total) ] }, $_ for @$self;
+  }
+  my $cls = blessed_or_pkg($self);
+  $cls->new( map {; $cls->new(@$_) } @parts )
+}
+
+sub ssect {
+  my ($self, $per) = @_;
+  my @parts;
+  my $x = 0;
+  if ($per) {
+    CORE::push @{ $parts[ int($x++ / $per) ] }, $_ for @$self;
+  }
+  my $cls = blessed_or_pkg($self);
+  $cls->new( map {; $cls->new(@$_) } @parts )
 }
 
 
@@ -769,6 +791,33 @@ Returns all elements in the array as a plain list.
 Like L</part>, but creates an array-type object containing two
 partitions; the first contains all items for which the subroutine evaluates to
 true, the second contains the remaining items.
+
+=head3 nsect
+
+  my ($first, $second) = array( 1 .. 10 )->nsect(2)->all;
+  # array( 1 .. 5 ), array( 6 .. 10 )
+
+Like L</part> and L</bisect>, but takes an (integer) number of sets to create.
+
+If there are no items in the list (or no sections are requested), 
+an empty array-type object is returned.
+
+If the list divides unevenly, the first set will be the largest.
+
+Inspired by L<List::NSect>.
+
+=head3 ssect
+
+  my ($first, $second) = array( 1 .. 10 )->ssect(5)->all;
+  # array( 1 .. 5 ), array( 6 .. 10 );
+
+Like L</nsect> and L</bisect>, but takes an (integer) target number of items
+per set.
+
+If the list divides unevenly, the last set will be smaller than the specified
+target.
+
+Inspired by L<List::NSect>.
 
 =head3 elements
 
@@ -1204,8 +1253,13 @@ L<List::UtilsBy>
 
 Jon Portnoy <avenj@cobaltirc.org>
 
+Portions of this code were contributed by Toby Inkster (CPAN: TOBYINK).
+
 Portions of this code are derived from L<Data::Perl> by Matthew Phillips
-(CPAN: MATTP), haarg et al
+(MATTP), haarg et al.
+
+Portions of this code are inspired by L<List::MoreUtils>-0.33 by Adam Kennedy (ADAMK), 
+Tassilo von Parseval, and Aaron Crane.
 
 Licensed under the same terms as Perl.
 

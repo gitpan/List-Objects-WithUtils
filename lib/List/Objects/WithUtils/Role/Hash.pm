@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Hash;
-$List::Objects::WithUtils::Role::Hash::VERSION = '2.010002';
+$List::Objects::WithUtils::Role::Hash::VERSION = '2.011001';
 use strictures 1;
 
 use Module::Runtime ();
@@ -26,7 +26,7 @@ sub inflated_rw_type { 'List::Objects::WithUtils::Hash::Inflated::RW' }
 
 =pod
 
-=for Pod::Coverage TO_JSON type
+=for Pod::Coverage TO_JSON damn type
 
 =cut
 
@@ -45,8 +45,10 @@ sub new {
   bless +{ @_[1 .. $#_] }, Scalar::Util::blessed $_[0] || $_[0]
 }
 
+sub export  { %{ $_[0] } }
 sub unbless { +{ %{ $_[0] } } }
-{ no warnings 'once'; *TO_JSON = *unbless; }
+
+{ no warnings 'once'; *TO_JSON = *unbless; *damn = *unbless; }
 
 sub clear { %{ $_[0] } = (); $_[0] }
 
@@ -93,8 +95,11 @@ sub sliced {
 
 sub set {
   my $self = shift;
-  my @keysidx = grep {; not $_ % 2 } 0 .. $#_ ;
-  my @valsidx = grep {; $_ % 2 }     0 .. $#_ ;
+
+  my (@keysidx, @valsidx);
+  for (0 .. $#_) {
+    $_ % 2 ? push @valsidx, $_ : push @keysidx, $_
+  }
 
   @{$self}{ @_[@keysidx] } = @_[@valsidx];
 
@@ -174,8 +179,6 @@ sub kv_map {
     List::Util::pairmap {; $sub->($a, $b) } %$self
   )
 }
-
-sub export { %{ $_[0] } }
 
 print
   qq[<Su-Shee> huf: I learned that from toyota via agile blahblah,],

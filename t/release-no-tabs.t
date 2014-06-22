@@ -9,7 +9,7 @@ BEGIN {
 use strict;
 use warnings;
 
-# this test was generated with Dist::Zilla::Plugin::NoTabsTests 0.07
+# this test was generated with Dist::Zilla::Plugin::Test::NoTabs 0.08
 
 use Test::More 0.88;
 use Test::NoTabs;
@@ -93,6 +93,7 @@ my @files = (
     't/01_array/no-moreutils/last_index.t',
     't/01_array/no-moreutils/last_where.t',
     't/01_array/no-moreutils/uniq.t',
+    't/01_array/nsect.t',
     't/01_array/nsort_by.t',
     't/01_array/part.t',
     't/01_array/pop.t',
@@ -110,6 +111,7 @@ my @files = (
     't/01_array/sort.t',
     't/01_array/sort_by.t',
     't/01_array/splice.t',
+    't/01_array/ssect.t',
     't/01_array/subclassed.t',
     't/01_array/tail.t',
     't/01_array/tuples.t',
