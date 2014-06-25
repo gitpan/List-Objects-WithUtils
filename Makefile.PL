@@ -23,7 +23,7 @@ my %WriteMakefileArgs = (
     "Carp" => 0,
     "Class::Method::Modifiers" => 0,
     "Exporter" => 0,
-    "List::Util" => "1.32",
+    "List::Util" => "1.33",
     "List::UtilsBy" => "0.09",
     "Module::Runtime" => "0.013",
     "Role::Tiny" => "1.003",
@@ -37,7 +37,7 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "Test::More" => "0.88"
   },
-  "VERSION" => "2.011001",
+  "VERSION" => "2.011002",
   "test" => {
     "TESTS" => "t/*.t t/00_load/*.t t/01_array/*.t t/01_array/no-moreutils/*.t t/02_hash/*.t t/03_junctions/*.t t/04_immutable/*.t t/05_typed/*.t t/06_immutable_typed/*.t t/07_json/*.t"
   }
@@ -48,7 +48,7 @@ my %FallbackPrereqs = (
   "Carp" => 0,
   "Class::Method::Modifiers" => 0,
   "Exporter" => 0,
-  "List::Util" => "1.32",
+  "List::Util" => "1.33",
   "List::UtilsBy" => "0.09",
   "Module::Runtime" => "0.013",
   "Role::Tiny" => "1.003",

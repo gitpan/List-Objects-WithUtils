@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.011001';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.011002';
 use strictures 1;
 
 use Carp            ();
@@ -312,7 +312,7 @@ sub splice {
 }
 
 sub has_any {
-  defined $_[1] ? !! &List::Util::first( $_[1], @{ $_[0] } )
+  defined $_[1] ? !! &List::Util::any( $_[1], @{ $_[0] } )
     : !! @{ $_[0] }
 }
 
