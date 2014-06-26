@@ -1,5 +1,5 @@
 package List::Objects::WithUtils;
-$List::Objects::WithUtils::VERSION = '2.011002';
+$List::Objects::WithUtils::VERSION = '2.012001';
 use Carp;
 use strictures 1;
 
@@ -247,11 +247,57 @@ List::Objects::WithUtils - List objects, kitchen sink included
 
 A set of roles and classes defining an object-oriented interface to Perl
 hashes and arrays with useful utility methods, junctions, type-checking
-ability, and optional autoboxing.
+ability, and optional autoboxing. Originally derived from L<Data::Perl>.
 
-Originally derived from L<Data::Perl>.
+=head2 Uses
 
-=head2 Arrays
+The included objects are useful as-is but are largely intended for use as data
+container types for attributes. This lends a more natural object-oriented
+syntax; these are particularly convenient in combination with delegated
+methods, as in this example:
+
+  package Some::Thing;
+  use List::Objects::WithUtils;
+  use Moo;
+
+  has items => (
+    is      => 'ro',
+    builder => sub { array },
+    handles => +{
+      add_items   => 'push',
+      get_items   => 'all',
+      items_where => 'grep',
+    },
+  );
+
+  # ... later ...
+  my $thing = Some::Thing->new;
+  $thing->add_items(@more_items);
+  # Operate on all positive items:
+  for my $item ($thing->items_where(sub { $_ > 0 })->all) {
+    ...
+  }
+
+L<List::Objects::Types> provides L<Type::Tiny>-based types & coercions
+matching the list objects provided by this distribution. These integrate
+nicely with typed or untyped list objects:
+
+  package Accounts;
+  use List::Objects::Types -types;
+  use Moo; use MooX::late;
+
+  has usergroups => (
+    is        => 'ro',
+    # +{ group => [ [ $usr => $id ], ... ] }
+    # Coerced to objects all the way down:
+    isa       => TypedHash[ TypedArray[ArrayObj] ],
+    coerce    => 1,
+    builder   => sub { +{} },
+  );
+
+=head2 Objects
+
+=head3 Arrays
 
 B<array> (L<List::Objects::WithUtils::Array>) provides basic mutable
 ARRAY-type objects.  Behavior is defined by
@@ -269,7 +315,7 @@ L<List::Objects::WithUtils::Array::Typed>.
 B<immarray_of> provides immutable type-checking arrays; see
 L<List::Objects::WithUtils::Array::Immutable::Typed>.
 
-=head2 Hashes
+=head3 Hashes
 
 B<hash> is the basic mutable HASH-type object imported from
 L<List::Objects::WithUtils::Hash>; see

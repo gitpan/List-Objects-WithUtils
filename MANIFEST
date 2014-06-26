@@ -66,6 +66,7 @@ t/01_array/first_where.t
 t/01_array/flatten.t
 t/01_array/flatten_all.t
 t/01_array/get.t
+t/01_array/get_or_else.t
 t/01_array/grep.t
 t/01_array/has_any.t
 t/01_array/head.t
@@ -133,6 +134,7 @@ t/02_hash/diff.t
 t/02_hash/exists.t
 t/02_hash/export.t
 t/02_hash/get.t
+t/02_hash/get_or_else.t
 t/02_hash/inflate.t
 t/02_hash/intersection.t
 t/02_hash/is_empty.t

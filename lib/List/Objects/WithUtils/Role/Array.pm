@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.011002';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.012001';
 use strictures 1;
 
 use Carp            ();
@@ -113,7 +113,14 @@ sub type {
 
 sub new { bless [ @_[1 .. $#_ ] ], Scalar::Util::blessed($_[0]) || $_[0] }
 
+=pod
+
+=for Pod::Coverage untyped
+
+=cut
+
 sub copy { blessed_or_pkg($_[0])->new(@{ $_[0] }) }
+{ no warnings 'once'; *untyped = *copy }
 
 sub inflate {
   my ($self) = @_;
@@ -146,6 +153,13 @@ sub end { $#{ $_[0] } }
 sub is_empty { ! @{ $_[0] } }
 
 sub get { $_[0]->[ $_[1] ] }
+
+sub get_or_else {
+  defined $_[0]->[ $_[1] ] ? $_[0]->[ $_[1] ]
+    : (Scalar::Util::reftype $_[2] || '') eq 'CODE' ? $_[2]->($_[0])
+    : $_[2]
+}
+
 sub set { $_[0]->[ $_[1] ] = $_[2] ; $_[0] }
 
 sub random { $_[0]->[ rand @{ $_[0] } ] }
@@ -204,7 +218,7 @@ sub delete_when {
 
 sub insert { 
   $#{$_[0]} = ($_[1]-1) if $_[1] > $#{$_[0]};
-  CORE::splice @{ $_[0] }, $_[1], 0, $_[2];
+  CORE::splice @{ $_[0] }, $_[1], 0, @_[2 .. $#_];
   $_[0] 
 }
 
@@ -699,8 +713,10 @@ Returns a new array object containing the deleted values (possibly none).
 =head3 insert
 
   $array->insert( $position, $value );
+  $array->insert( $position, @values );
 
-Inserts a value at a given position, moving the rest of the array rightwards.
+Inserts values at a given position, moving the rest of the array
+rightwards.
 
 The array will be "backfilled" (with undefs) if $position is past the end of
 the array.
@@ -864,6 +880,21 @@ flattened. Also see L</flatten>.
 =head3 get
 
 Returns the array element corresponding to a specified index.
+
+=head3 get_or_else
+
+  # Expect to find a hash() obj at $pos in $array,
+  # or create an empty one if $pos is undef:
+  my @keys = $array->get_or_else($pos => hash)->keys->all;
+
+  # Or pass a coderef; first arg is the object being operated on:
+  my $item_or_first = $array->get_or_else($pos => sub { shift->get(0) });
+
+Returns the element corresponding to a specified index; optionally takes a
+second argument that is used as a default value if the given index is undef.
+
+If the second argument is a coderef, it is invoked on the object and its
+return value is taken as the default value.
 
 =head3 head
 

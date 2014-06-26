@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Hash::Typed;
-$List::Objects::WithUtils::Role::Hash::Typed::VERSION = '2.011002';
+$List::Objects::WithUtils::Role::Hash::Typed::VERSION = '2.012001';
 use strictures 1;
 
 use Carp ();
@@ -7,9 +7,15 @@ use Scalar::Util ();
 use Type::Tie ();
 
 use Role::Tiny;
-requires 'type', 'new';
+requires 'type', 'untyped', 'new';
 
 around type => sub { tied(%{$_[1]})->type };
+
+around untyped => sub {
+  my (undef, $self) = @_;
+  require List::Objects::WithUtils::Hash;
+  List::Objects::WithUtils::Hash->new(%$self)
+};
 
 around new => sub {
   my (undef, $class, $type) = splice @_, 0, 2;
@@ -72,6 +78,10 @@ Also see L<Types::Standard>, L<List::Objects::Types>
 =head2 type
 
 Returns the L<Type::Tiny> type the object was created with.
+
+=head2 untyped
+
+Returns a (shallow) clone that is a plain L<List::Objects::WithUtils::Hash>.
 
 =head1 AUTHOR
 

@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Hash;
-$List::Objects::WithUtils::Role::Hash::VERSION = '2.011002';
+$List::Objects::WithUtils::Role::Hash::VERSION = '2.012001';
 use strictures 1;
 
 use Module::Runtime ();
@@ -52,7 +52,14 @@ sub unbless { +{ %{ $_[0] } } }
 
 sub clear { %{ $_[0] } = (); $_[0] }
 
+=pod
+
+=for Pod::Coverage untyped
+
+=cut
+
 sub copy { blessed_or_pkg($_[0])->new(%{ $_[0] }) }
+{ no warnings 'once'; *untyped = *copy; }
 
 sub inflate {
   my ($self, %params) = @_;
@@ -74,6 +81,12 @@ sub get {
     )
   }
   $_[0]->{ $_[1] }
+}
+
+sub get_or_else {
+  exists $_[0]->{ $_[1] } ? $_[0]->{ $_[1] }
+    : (Scalar::Util::reftype $_[2] || '') eq 'CODE' ? $_[2]->($_[0])
+    : $_[2]
 }
 
 =pod
@@ -288,6 +301,24 @@ Retrieves a key or list of keys from the hash.
 If we're taking a slice (multiple keys were specified), values are returned
 as an L</array_type> object. (See L</sliced> if you'd rather generate a new
 hash.)
+
+=head2 get_or_else
+
+  # Expect to find an array() obj at $key in $hash,
+  # or create an empty one if $key doesn't exist:
+  my @all = $hash->get_or_else($key => array)->all;
+
+  # Or pass a coderef; first arg is the object being operated on:
+  my $item = $hash->get_or_else($key => sub { shift->get($defaultkey) });
+
+Retrieves a key from the hash; optionally takes a second argument that is used
+as a default value if the given key does not exist in the hash.
+
+If the second argument is a coderef, it is invoked on the object and its
+return value is taken as the default value.
+
+If the key is nonexistant and there is no default provided, C<undef> is
+returned.
 
 =head2 inflate
 
