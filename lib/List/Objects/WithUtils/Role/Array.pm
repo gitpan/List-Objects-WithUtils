@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.012001';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.013001';
 use strictures 1;
 
 use Carp            ();
@@ -77,7 +77,7 @@ sub __flatten {
 }
 
 
-use Role::Tiny;
+use Role::Tiny;   # my position relative to subs matters
 
 
 sub inflated_type { 'List::Objects::WithUtils::Hash' }
@@ -85,8 +85,8 @@ sub inflated_type { 'List::Objects::WithUtils::Hash' }
 sub is_mutable { 1 }
 sub is_immutable { ! $_[0]->is_mutable }
 
-# subclass-mungable (keep me under the Role::Tiny import):
 sub _try_coerce {
+  # subclass-mungable (keep me under the Role::Tiny import)
   my (undef, $type, @vals) = @_;
     Carp::confess "Expected a Type::Tiny type but got $type"
       unless Scalar::Util::blessed $type;
@@ -152,11 +152,22 @@ sub end { $#{ $_[0] } }
 
 sub is_empty { ! @{ $_[0] } }
 
+sub exists {
+  my $r;
+  !!(
+    $_[1] <= $#{ $_[0] } ? $_[1] >= 0 ? 1
+      : (($r = $_[1] + @{ $_[0] }) <= $#{ $_[0] } && $r >= 0) ? 1 : ()
+      : ()
+  )
+}
+
+sub defined { defined $_[0]->[ $_[1] ] }
+
 sub get { $_[0]->[ $_[1] ] }
 
 sub get_or_else {
   defined $_[0]->[ $_[1] ] ? $_[0]->[ $_[1] ]
-    : (Scalar::Util::reftype $_[2] || '') eq 'CODE' ? $_[2]->($_[0])
+    : (Scalar::Util::reftype $_[2] || '') eq 'CODE' ? $_[2]->(@_[0,1])
     : $_[2]
 }
 
@@ -382,6 +393,12 @@ sub lastidx {
   -1
 }
 
+=pod
+
+=for Pod::Coverage zip
+
+=cut
+
 sub mesh {
   my $max_idx = -1;
   for (@_) { $max_idx = $#$_ if $max_idx < $#$_ }
@@ -391,6 +408,7 @@ sub mesh {
     } 0 .. $max_idx
   )
 }
+{ no warnings 'once'; *zip = *mesh; }
 
 sub natatime {
   my @list  = @{ $_[0] };
@@ -641,9 +659,23 @@ Returns a shallow clone of the current object.
 
 Returns the number of elements in the array.
 
+=head3 defined
+
+Returns true if the element at the specified position is defined.
+
 =head3 end
 
 Returns the last index of the array (or -1 if the array is empty).
+
+=head3 exists
+
+Returns true if the specified index exists in the array.
+
+Negative indices work as you might expect:
+
+  my $arr = array(1, 2, 3);
+  $arr->set(-2 => 'foo') if $arr->exists(-2);
+  # [ 1, 'foo', 3 ]
 
 =head3 is_empty
 
@@ -887,14 +919,23 @@ Returns the array element corresponding to a specified index.
   # or create an empty one if $pos is undef:
   my @keys = $array->get_or_else($pos => hash)->keys->all;
 
-  # Or pass a coderef; first arg is the object being operated on:
+  # Or pass a coderef
+  # First arg is the object being operated on:
   my $item_or_first = $array->get_or_else($pos => sub { shift->get(0) });
+  # Second arg is the requested index:
+  my $item  = $array->get_or_else(3 => sub {
+    my (undef, $pos) = @_;
+    my $created = make_value_for( $pos );
+    $array->set($pos => $created);
+    $created
+  });
 
 Returns the element corresponding to a specified index; optionally takes a
 second argument that is used as a default value if the given index is undef.
 
-If the second argument is a coderef, it is invoked on the object and its
-return value is taken as the default value.
+If the second argument is a coderef, it is invoked on the object (with the
+requested index as an argument) and its return value is taken as the default
+value.
 
 =head3 head
 

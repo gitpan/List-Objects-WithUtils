@@ -1,5 +1,5 @@
 package List::Objects::WithUtils;
-$List::Objects::WithUtils::VERSION = '2.012001';
+$List::Objects::WithUtils::VERSION = '2.013001';
 use Carp;
 use strictures 1;
 
@@ -344,6 +344,25 @@ providing methods for native ARRAY and HASH types.
 Importing B<all> or B<:all> will import all of the object constructors and
 additionally turn B<autobox> on; C<use Lowu;> is a shortcut for importing
 B<all>.
+
+=head2 Debugging
+
+Most methods belonging to these objects are heavily micro-optimized -- at the
+cost of useful error handling.
+
+Since there are few built-in argument checks, a mistake in your code can
+frequently lead to slightly cryptic errors from the perl side:
+
+  > my $pos;  # whoops, I'm still undefined later:
+  > if ($arr->exists($pos)) { ... }
+  Use of uninitialized value in numeric le (<=) at $useless_lib_lineno
+
+... in which case L<Devel::Confess> is likely to improve your quality of life
+by providing a real backtrace:
+
+  $ perl -d:Confess my_app.pl
+  Use of uninitialized value in numeric le (<=) at ...
+    [...]::Array::exists(ARRAY(0x8441068), undef) called at ...
 
 =head2 Subclassing
 

@@ -57,10 +57,12 @@ t/01_array/bisect.t
 t/01_array/clear.t
 t/01_array/copy.t
 t/01_array/count.t
+t/01_array/defined.t
 t/01_array/delete.t
 t/01_array/delete_when.t
 t/01_array/diff.t
 t/01_array/end.t
+t/01_array/exists.t
 t/01_array/first_index.t
 t/01_array/first_where.t
 t/01_array/flatten.t
