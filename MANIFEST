@@ -39,6 +39,7 @@ lib/List/Objects/WithUtils/Role/Hash/Immutable.pm
 lib/List/Objects/WithUtils/Role/Hash/TiedRO.pm
 lib/List/Objects/WithUtils/Role/Hash/Typed.pm
 lib/Lowu.pm
+t/00-report-prereqs.dd
 t/00-report-prereqs.t
 t/00_load/all.t
 t/00_load/all_typetinyish.t
@@ -139,6 +140,7 @@ t/02_hash/get.t
 t/02_hash/get_or_else.t
 t/02_hash/inflate.t
 t/02_hash/intersection.t
+t/02_hash/inverted.t
 t/02_hash/is_empty.t
 t/02_hash/iter.t
 t/02_hash/keys.t

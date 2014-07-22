@@ -53,12 +53,18 @@
       "test" : {
          "recommends" : {
             "CPAN::Meta" : "0",
+            "CPAN::Meta::Prereqs" : "0",
             "CPAN::Meta::Requirements" : "2.120900",
             "JSON::PP" : "0",
             "Test::Without::Module" : "0"
          },
          "requires" : {
-            "Test::More" : "0.88"
+            "ExtUtils::MakeMaker" : "0",
+            "File::Spec" : "0",
+            "List::Util" : "1.33",
+            "Scalar::Util" : "0",
+            "Test::More" : "0.88",
+            "version" : "0.77"
          }
       }
    },
@@ -70,6 +76,6 @@
          "web" : "git://github.com/avenj/list-objects-withutils"
       }
    },
-   "version" : "2.013001"
+   "version" : "2.014001"
 }
 

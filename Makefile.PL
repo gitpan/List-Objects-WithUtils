@@ -35,9 +35,14 @@ my %WriteMakefileArgs = (
     "strictures" => 1
   },
   "TEST_REQUIRES" => {
-    "Test::More" => "0.88"
+    "ExtUtils::MakeMaker" => 0,
+    "File::Spec" => 0,
+    "List::Util" => "1.33",
+    "Scalar::Util" => 0,
+    "Test::More" => "0.88",
+    "version" => "0.77"
   },
-  "VERSION" => "2.013001",
+  "VERSION" => "2.014001",
   "test" => {
     "TESTS" => "t/*.t t/00_load/*.t t/01_array/*.t t/01_array/no-moreutils/*.t t/02_hash/*.t t/03_junctions/*.t t/04_immutable/*.t t/05_typed/*.t t/06_immutable_typed/*.t t/07_json/*.t"
   }
@@ -48,6 +53,8 @@ my %FallbackPrereqs = (
   "Carp" => 0,
   "Class::Method::Modifiers" => 0,
   "Exporter" => 0,
+  "ExtUtils::MakeMaker" => 0,
+  "File::Spec" => 0,
   "List::Util" => "1.33",
   "List::UtilsBy" => "0.09",
   "Module::Runtime" => "0.013",
@@ -58,7 +65,8 @@ my %FallbackPrereqs = (
   "autobox" => 0,
   "overload" => 0,
   "parent" => 0,
-  "strictures" => 1
+  "strictures" => 1,
+  "version" => "0.77"
 );
 
 

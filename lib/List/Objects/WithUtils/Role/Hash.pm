@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Hash;
-$List::Objects::WithUtils::Role::Hash::VERSION = '2.013001';
+$List::Objects::WithUtils::Role::Hash::VERSION = '2.014001';
 use strictures 1;
 
 use Module::Runtime ();
@@ -192,6 +192,25 @@ sub kv_map {
     List::Util::pairmap {; $sub->($a, $b) } %$self
   )
 }
+
+=pod
+
+=for Pod::Coverage invert
+
+=cut
+
+sub inverted {
+  my ($self) = @_;
+  my $pkg = blessed_or_pkg($self);
+  my %new;
+  List::Util::pairmap {;
+    exists $new{$b} ?
+      $new{$b}->push($a) : ( $new{$b} = $pkg->array_type->new($a) )
+  } %$self;
+  $pkg->new(%new)
+}
+{ no warnings 'once'; *invert = *inverted; }
+
 
 print
   qq[<Su-Shee> huf: I learned that from toyota via agile blahblah,],
@@ -459,6 +478,26 @@ Returns the hash object.
 Returns a new hash object built from the specified set of keys.
 
 (See L</get> if you only need the values.)
+
+=head2 inverted
+
+  my $hash = hash(
+    a => 1,
+    b => 2,
+    c => 2,
+    d => 3
+  );
+  my $newhash = $hash->inverted;
+  # $newhash = +{
+  #   1 => array('a'),
+  #   2 => array('b', 'c'),
+  #   3 => array('d'),
+  # }
+
+Inverts the hash, creating L</array_type> objects containing one or more keys
+for each unique value.
+
+(This is a bit like reversing the hash, but lossless.)
 
 =head2 array_type
 
