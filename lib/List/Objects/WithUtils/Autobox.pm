@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Autobox;
-$List::Objects::WithUtils::Autobox::VERSION = '2.014001';
+$List::Objects::WithUtils::Autobox::VERSION = '2.014002';
 use strictures 1;
 require Carp;
 require Module::Runtime;
