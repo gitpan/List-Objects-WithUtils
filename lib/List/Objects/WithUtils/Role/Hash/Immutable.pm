@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Hash::Immutable;
-$List::Objects::WithUtils::Role::Hash::Immutable::VERSION = '2.014002';
+$List::Objects::WithUtils::Role::Hash::Immutable::VERSION = '2.015001';
 use strictures 1;
 use Carp ();
 use Tie::Hash ();

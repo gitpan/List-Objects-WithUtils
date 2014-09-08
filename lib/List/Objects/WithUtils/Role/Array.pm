@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.014002';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.015001';
 use strictures 1;
 
 use Carp            ();

@@ -1,15 +1,15 @@
 
 BEGIN {
-  unless ($ENV{RELEASE_TESTING}) {
+  unless ($ENV{AUTHOR_TESTING}) {
     require Test::More;
-    Test::More::plan(skip_all => 'these tests are for release candidate testing');
+    Test::More::plan(skip_all => 'these tests are for testing by the author');
   }
 }
 
 use strict;
 use warnings;
 
-# this test was generated with Dist::Zilla::Plugin::Test::NoTabs 0.08
+# this test was generated with Dist::Zilla::Plugin::Test::NoTabs 0.09
 
 use Test::More 0.88;
 use Test::NoTabs;
@@ -137,6 +137,7 @@ my @files = (
     't/02_hash/export.t',
     't/02_hash/get.t',
     't/02_hash/get_or_else.t',
+    't/02_hash/get_path.t',
     't/02_hash/inflate.t',
     't/02_hash/intersection.t',
     't/02_hash/inverted.t',
@@ -164,9 +165,9 @@ my @files = (
     't/06_immutable_typed/immarray_of.t',
     't/06_immutable_typed/immhash_of.t',
     't/07_json/json.t',
+    't/author-no-tabs.t',
     't/release-cpan-changes.t',
     't/release-dist-manifest.t',
-    't/release-no-tabs.t',
     't/release-pod-coverage.t',
     't/release-pod-linkcheck.t',
     't/release-pod-syntax.t',

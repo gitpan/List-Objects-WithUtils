@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Hash::Inflated::RW;
-$List::Objects::WithUtils::Hash::Inflated::RW::VERSION = '2.014002';
+$List::Objects::WithUtils::Hash::Inflated::RW::VERSION = '2.015001';
 use strictures 1;
 use Carp ();
 use Scalar::Util ();

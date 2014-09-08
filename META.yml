@@ -5,14 +5,11 @@ author:
 build_requires:
   ExtUtils::MakeMaker: 0
   File::Spec: 0
-  List::Util: 1.33
-  Scalar::Util: 0
   Test::More: 0.88
-  version: 0.77
 configure_requires:
-  ExtUtils::MakeMaker: 6.30
+  ExtUtils::MakeMaker: 0
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 5.019, CPAN::Meta::Converter version 2.141520'
+generated_by: 'Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.142060'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -37,4 +34,4 @@ requires:
   strictures: 1
 resources:
   repository: git://github.com/avenj/list-objects-withutils.git
-version: 2.014002
+version: 2.015001
