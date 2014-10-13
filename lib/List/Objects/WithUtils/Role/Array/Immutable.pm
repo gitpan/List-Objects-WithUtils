@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array::Immutable;
-$List::Objects::WithUtils::Role::Array::Immutable::VERSION = '2.015001';
+$List::Objects::WithUtils::Role::Array::Immutable::VERSION = '2.016001';
 use strictures 1;
 use Carp ();
 use Tie::Array ();

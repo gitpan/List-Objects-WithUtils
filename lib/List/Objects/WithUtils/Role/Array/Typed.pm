@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array::Typed;
-$List::Objects::WithUtils::Role::Array::Typed::VERSION = '2.015001';
+$List::Objects::WithUtils::Role::Array::Typed::VERSION = '2.016001';
 use strictures 1;
 
 use Carp ();
@@ -64,7 +64,7 @@ List::Objects::WithUtils::Role::Array::Typed - Type-checking array behavior
   # Array of Ints:
   my $arr = array_of Int() => (1,2,3);
 
-  # Array of arrays of Ints (coerced from ARRAYs):
+  # Array of array objects of Ints (coerced from ARRAYs):
   my $arr = array_of TypedArray[Int] => [1,2,3], [4,5,6];
 
 =head1 DESCRIPTION

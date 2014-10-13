@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Hash;
-$List::Objects::WithUtils::Role::Hash::VERSION = '2.015001';
+$List::Objects::WithUtils::Role::Hash::VERSION = '2.016001';
 use strictures 1;
 
 use Module::Runtime ();
@@ -26,7 +26,7 @@ sub inflated_rw_type { 'List::Objects::WithUtils::Hash::Inflated::RW' }
 
 =pod
 
-=for Pod::Coverage TO_JSON damn type
+=for Pod::Coverage TO_JSON TO_ZPL damn type
 
 =cut
 
@@ -48,7 +48,11 @@ sub new {
 sub export  { %{ $_[0] } }
 sub unbless { +{ %{ $_[0] } } }
 
-{ no warnings 'once'; *TO_JSON = *unbless; *damn = *unbless; }
+{ no warnings 'once'; 
+  *TO_JSON  = *unbless; 
+  *TO_ZPL   = *unbless;
+  *damn     = *unbless; 
+}
 
 sub clear { %{ $_[0] } = (); $_[0] }
 
@@ -269,7 +273,8 @@ objects.
 
 In addition to the methods documented below, these objects provide a
 C<TO_JSON> method exporting a plain HASH-type reference for convenience when
-feeding L<JSON::Tiny> or similar.
+feeding L<JSON::Tiny> or similar, as well as a C<TO_ZPL> method for
+compatibility with L<Text::ZPL>.
 
 =head2 Basic hash methods
 
@@ -415,16 +420,9 @@ hash.)
 =head3 get_path
 
   my $hash = hash(
-    foo => +{
-      bar => +{
-        baz => 1
-      }
-    },
-    quux => [
-      +{ weeble => 'snork' }
-    ],
+    foo  => +{ bar => +{ baz => 1 } },
+    quux => [ +{ weeble => 'snork' } ],
   );
-
   my $item = $hash->get_path(qw/foo bar baz/);        # 1
 
 Attempt to retrieve a scalar item from a 'deep' hash (without risking
@@ -442,6 +440,8 @@ Returns undef if any of the path elements are nonexistant.
   
 An exception is thrown if an invalid access is attempted, such as trying to
 use a hash-type object as if it were an array.
+
+(Available from v2.15.1)
 
 =head3 get_or_else
 
@@ -491,7 +491,9 @@ Returns the list of values in the hash as an L</array_type> object.
 Inverts the hash, creating L</array_type> objects containing one or more keys
 for each unique value.
 
-(This is a bit like reversing the hash, but lossless.)
+This is a bit like reversing the hash, but lossless.
+
+(Available from v2.14.1)
 
 =head3 iter
 
@@ -505,6 +507,8 @@ Returns an iterator that, when called, returns ($key, $value) pairs.
 The iterator operates on a shallow clone of the current hash, making it
 (relatively) safe to operate on the original hash while using the iterator.
 
+(Available from v2.9.1)
+
 =head3 kv
 
   for my $pair ($hash->kv->all) {
@@ -512,7 +516,7 @@ The iterator operates on a shallow clone of the current hash, making it
   }
 
 Returns an L</array_type> object containing the key/value pairs in the hash,
-each of which is a two-element ARRAY.
+each of which is a two-element (unblessed) ARRAY.
 
 =head3 kv_map
 
@@ -523,6 +527,8 @@ each of which is a two-element ARRAY.
 Like C<map>, but operates on pairs. See L<List::Util/"pairmap">. 
 
 Returns an L</array_type> object containing the results of the map.
+
+(Available from v2.8.1)
 
 =head3 kv_sort
 

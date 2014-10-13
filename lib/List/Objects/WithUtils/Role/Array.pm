@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.015001';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.016001';
 use strictures 1;
 
 use Carp            ();
@@ -12,14 +12,14 @@ our $UsingUtilsByXS = 0;
 { no warnings 'once';
   if (eval {; require List::UtilsBy::XS; 1 } && !$@) {
     $UsingUtilsByXS = 1;
-    *__sort_by  = *List::UtilsBy::XS::sort_by;
-    *__nsort_by = *List::UtilsBy::XS::nsort_by;
-    *__uniq_by  = *List::UtilsBy::XS::uniq_by;
+    *__sort_by  = \&List::UtilsBy::XS::sort_by;
+    *__nsort_by = \&List::UtilsBy::XS::nsort_by;
+    *__uniq_by  = \&List::UtilsBy::XS::uniq_by;
   } else {
     require List::UtilsBy;
-    *__sort_by  = *List::UtilsBy::sort_by;
-    *__nsort_by = *List::UtilsBy::nsort_by;
-    *__uniq_by  = *List::UtilsBy::uniq_by;
+    *__sort_by  = \&List::UtilsBy::sort_by;
+    *__nsort_by = \&List::UtilsBy::nsort_by;
+    *__uniq_by  = \&List::UtilsBy::uniq_by;
   }
 }
 
@@ -103,7 +103,7 @@ sub _try_coerce {
 
 =pod
 
-=for Pod::Coverage TO_JSON damn type
+=for Pod::Coverage TO_JSON TO_ZPL damn type
 
 =cut
 
@@ -130,7 +130,11 @@ sub inflate {
 }
 
 sub unbless { [ @{ $_[0] } ] }
-{ no warnings 'once'; *TO_JSON = *unbless; *damn = *unbless; }
+{ no warnings 'once'; 
+  *TO_JSON  = *unbless; 
+  *TO_ZPL   = *unbless;
+  *damn     = *unbless; 
+}
 
 sub validated {
   my ($self, $type) = @_;
@@ -649,7 +653,8 @@ methods.
 
 In addition to the methods documented below, these objects provide a
 C<TO_JSON> method exporting a plain ARRAY-type reference for convenience when
-feeding L<JSON::Tiny> or similar.
+feeding L<JSON::Tiny> or similar, as well as a C<TO_ZPL> method for
+compatibility with L<Text::ZPL>.
 
 =head2 Basic array methods
 
@@ -669,6 +674,8 @@ Returns the number of elements in the array.
 
 Returns true if the element at the specified position is defined.
 
+(Available from v2.13.1)
+
 =head3 end
 
 Returns the last index of the array (or -1 if the array is empty).
@@ -682,6 +689,8 @@ Negative indices work as you might expect:
   my $arr = array(1, 2, 3);
   $arr->set(-2 => 'foo') if $arr->exists(-2);
   # [ 1, 'foo', 3 ]
+
+(Available from v2.13.1)
 
 =head3 is_empty
 
@@ -760,6 +769,8 @@ The array will be "backfilled" (with undefs) if $position is past the end of
 the array.
 
 Returns the array object.
+
+(Available from v2.12.1)
 
 =head3 pop
 
@@ -860,6 +871,8 @@ If the list divides unevenly, the first set will be the largest.
 
 Inspired by L<List::NSect>.
 
+(Available from v2.11.1)
+
 =head3 ssect
 
   my ($first, $second) = array( 1 .. 10 )->ssect(5)->all;
@@ -872,6 +885,8 @@ If the list divides unevenly, the last set will be smaller than the specified
 target.
 
 Inspired by L<List::NSect>.
+
+(Available from v2.11.1)
 
 =head3 elements
 
