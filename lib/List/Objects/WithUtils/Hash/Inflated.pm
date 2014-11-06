@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Hash::Inflated;
-$List::Objects::WithUtils::Hash::Inflated::VERSION = '2.016001';
+$List::Objects::WithUtils::Hash::Inflated::VERSION = '2.017001';
 use strictures 1;
 use Carp ();
 use Scalar::Util ();

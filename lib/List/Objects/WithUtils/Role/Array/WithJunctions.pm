@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array::WithJunctions;
-$List::Objects::WithUtils::Role::Array::WithJunctions::VERSION = '2.016001';
+$List::Objects::WithUtils::Role::Array::WithJunctions::VERSION = '2.017001';
 use strictures 1;
 
 use List::Objects::WithUtils::Array::Junction ();

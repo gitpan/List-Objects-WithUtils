@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.016001';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.017001';
 use strictures 1;
 
 use Carp            ();
@@ -509,9 +509,22 @@ sub tuples {
   blessed_or_pkg($self)->new(@res)
 }
 
+=pod
+
+=for Pod::Coverage fold_left foldl fold_right
+
+=cut
+
+# TODO consider accepting identity vals for reduce/foldr?
 sub reduce {
   List::Util::reduce { $_[1]->($a, $b) } @{ $_[0] }
 }
+{ no warnings 'once'; *foldl = *reduce; *fold_left = *reduce; }
+
+sub foldr {
+  List::Util::reduce { $_[1]->($b, $a) } CORE::reverse @{ $_[0] }
+}
+{ no warnings 'once'; *fold_right = *foldr; }
 
 sub rotate {
   my ($self, %params) = @_;
@@ -1253,12 +1266,35 @@ array.
 
 See also L</rotate>, L</rotate_in_place>.
 
+(Available from v2.7.1)
+
 =head3 reduce
 
   my $sum = array(1,2,3)->reduce(sub { $_[0] + $_[1] });
 
 Reduces the array by calling the given subroutine for each element of the
-list. See L<List::Util/"reduce">.
+list. The first argument passed to the subroutine is the accumulated value;
+the second argument is the current element. See L<List::Util/"reduce">.
+
+An empty list reduces to C<undef>.
+
+This is a "left fold" -- B<foldl> is an alias for L</reduce> (as of v2.17.1).
+
+See also: L</foldr>
+
+=head3 foldr
+
+  my $result = array(2,3,6)->foldr(sub { $_[1] / $_[0] });  # 1
+
+Reduces the array by calling the given subroutine for each element of the
+list starting at the end (the opposite of L</reduce>).
+
+Unlike L</reduce> (foldl), the first argument passed to the subroutine is the
+current element; the second argument is the accumulated value.
+
+An empty list reduces to C<undef>.
+
+(Available from v2.17.1)
 
 =head3 visit
 
@@ -1268,6 +1304,8 @@ Executes the given subroutine against each element sequentially; in practice
 this is much like L</map>, except the return value is thrown away.
 
 Returns the original array object.
+
+(Available from v2.7.1)
 
 =head2 Methods that sort the list
 

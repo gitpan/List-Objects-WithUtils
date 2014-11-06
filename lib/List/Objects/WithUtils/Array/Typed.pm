@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Array::Typed;
-$List::Objects::WithUtils::Array::Typed::VERSION = '2.016001';
+$List::Objects::WithUtils::Array::Typed::VERSION = '2.017001';
 use strictures 1;
 
 require Role::Tiny;

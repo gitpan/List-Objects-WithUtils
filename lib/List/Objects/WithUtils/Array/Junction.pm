@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Array::Junction;
-$List::Objects::WithUtils::Array::Junction::VERSION = '2.016001';
+$List::Objects::WithUtils::Array::Junction::VERSION = '2.017001';
 ## no critic
 
 { package 
