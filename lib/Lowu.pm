@@ -1,5 +1,5 @@
 package Lowu;
-$Lowu::VERSION = '2.017001';
+$Lowu::VERSION = '2.017002';
 use strictures 1;
 
 use parent 'List::Objects::WithUtils';
