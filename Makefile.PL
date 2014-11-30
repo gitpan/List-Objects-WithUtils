@@ -39,7 +39,7 @@ my %WriteMakefileArgs = (
     "File::Spec" => 0,
     "Test::More" => "0.88"
   },
-  "VERSION" => "2.018001",
+  "VERSION" => "2.019001",
   "test" => {
     "TESTS" => "t/*.t t/00_load/*.t t/01_array/*.t t/01_array/no-moreutils/*.t t/02_hash/*.t t/03_junctions/*.t t/04_immutable/*.t t/05_typed/*.t t/06_immutable_typed/*.t t/07_json/*.t t/08_zpl/*.t"
   }

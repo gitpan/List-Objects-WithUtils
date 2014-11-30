@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Hash;
-$List::Objects::WithUtils::Hash::VERSION = '2.018001';
+$List::Objects::WithUtils::Hash::VERSION = '2.019001';
 use strictures 1;
 
 require Role::Tiny;
@@ -7,8 +7,17 @@ Role::Tiny->apply_roles_to_package( __PACKAGE__,
   'List::Objects::WithUtils::Role::Hash'
 );
 
-use Exporter 'import';
+use Exporter ();
 our @EXPORT = 'hash';
+
+sub import {
+  my $pkg = caller;
+  { no strict 'refs';
+    ${"${pkg}::a"} = ${"${pkg}::a"}; ${"${pkg}::b"} = ${"${pkg}::b"};
+  }
+  goto &Exporter::import
+}
+
 sub hash { __PACKAGE__->new(@_) }
 
 print

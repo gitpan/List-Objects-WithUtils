@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Array;
-$List::Objects::WithUtils::Array::VERSION = '2.018001';
+$List::Objects::WithUtils::Array::VERSION = '2.019001';
 use strictures 1;
 
 require Role::Tiny;
@@ -16,8 +16,7 @@ our @EXPORT = 'array';
 sub import {
   my $pkg = caller;
   { no strict 'refs';
-    ${"${pkg}::a"} = ${"${pkg}::a"};
-    ${"${pkg}::b"} = ${"${pkg}::b"};
+    ${"${pkg}::a"} = ${"${pkg}::a"}; ${"${pkg}::b"} = ${"${pkg}::b"};
   }
   goto &Exporter::import
 }
