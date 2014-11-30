@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.017002';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.018001';
 use strictures 1;
 
 use Carp            ();
@@ -315,9 +315,14 @@ sub indexes {
 }
 
 sub sort {
-  if (defined $_[1]) {
+  if (defined $_[1] && (my $cb = $_[1])) {
+    my $pkg = caller;
+    no strict 'refs';
     return blessed_or_pkg($_[0])->new(
-      CORE::sort {; $_[1]->($a, $b) } @{ $_[0] }
+      CORE::sort {; 
+        local (*{"${pkg}::a"}, *{"${pkg}::b"}) = (\$a, \$b);
+        $a->$cb($b) 
+      } @{ $_[0] }
     )
   }
   return blessed_or_pkg($_[0])->new( CORE::sort @{ $_[0] } )
@@ -517,12 +522,24 @@ sub tuples {
 
 # TODO consider accepting identity vals for reduce/foldr?
 sub reduce {
-  List::Util::reduce { $_[1]->($a, $b) } @{ $_[0] }
+  my $pkg = caller;
+  no strict 'refs';
+  my $cb = $_[1];
+  List::Util::reduce { 
+    local (*{"${pkg}::a"}, *{"${pkg}::b"}) = (\$a, \$b);
+    $a->$cb($b)
+  } @{ $_[0] }
 }
 { no warnings 'once'; *foldl = *reduce; *fold_left = *reduce; }
 
 sub foldr {
-  List::Util::reduce { $_[1]->($b, $a) } CORE::reverse @{ $_[0] }
+  my $pkg = caller;
+  no strict 'refs';
+  my $cb = $_[1];
+  List::Util::reduce {
+    local (*{"${pkg}::a"}, *{"${pkg}::b"}) = (\$b, \$a);
+    $a->$cb($b)
+  } CORE::reverse @{ $_[0] }
 }
 { no warnings 'once'; *fold_right = *foldr; }
 
@@ -647,7 +664,7 @@ List::Objects::WithUtils::Role::Array - Array manipulation methods
     ...
   }
 
-  my $sum = array(1 .. 10)->reduce(sub { $_[0] + $_[1] });
+  my $sum = array(1 .. 10)->reduce(sub { $a + $b });
 
   # See below for full list of methods
 
@@ -1270,11 +1287,14 @@ See also L</rotate>, L</rotate_in_place>.
 
 =head3 reduce
 
-  my $sum = array(1,2,3)->reduce(sub { $_[0] + $_[1] });
+  my $sum = array(1,2,3)->reduce(sub { $a + $b });
 
 Reduces the array by calling the given subroutine for each element of the
-list. The first argument passed to the subroutine is the accumulated value;
-the second argument is the current element. See L<List::Util/"reduce">.
+list. C<$a> is the accumulated value; C<$b> is the current element. See
+L<List::Util/"reduce">.
+
+Prior to v2.18.1, C<$_[0]> and C<$_[1]> must be used in place of C<$a> and
+C<$b>, respectively.
 
 An empty list reduces to C<undef>.
 
@@ -1311,11 +1331,13 @@ Returns the original array object.
 
 =head3 sort
 
-  my $sorted = $array->sort(sub { $_[0] cmp $_[1] });
+  my $sorted = $array->sort(sub { $a cmp $b });
 
 Returns a new array object consisting of the list sorted by the given
-subroutine. C<$_[0]> and C<$_[1]> are equivalent to C<$a> and C<$b> in a
-normal sort() call.
+subroutine.
+
+Prior to version 2.18.1, C<$_[0]> and C<$_[1]> must be used in place of C<$a>
+and C<$b>, respectively.
 
 =head3 sort_by
 

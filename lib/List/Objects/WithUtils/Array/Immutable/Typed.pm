@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Array::Immutable::Typed;
-$List::Objects::WithUtils::Array::Immutable::Typed::VERSION = '2.017002';
+$List::Objects::WithUtils::Array::Immutable::Typed::VERSION = '2.018001';
 use strictures 1;
 
 require Role::Tiny;

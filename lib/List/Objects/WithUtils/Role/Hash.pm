@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Hash;
-$List::Objects::WithUtils::Role::Hash::VERSION = '2.017002';
+$List::Objects::WithUtils::Role::Hash::VERSION = '2.018001';
 use strictures 1;
 
 use Module::Runtime ();

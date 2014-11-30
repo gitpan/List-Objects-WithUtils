@@ -4,7 +4,7 @@
       "Jon Portnoy <avenj@cobaltirc.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 5.024, CPAN::Meta::Converter version 2.142690",
+   "generated_by" : "Dist::Zilla version 5.025, CPAN::Meta::Converter version 2.142690",
    "license" : [
       "perl_5"
    ],
@@ -72,6 +72,6 @@
          "web" : "git://github.com/avenj/list-objects-withutils"
       }
    },
-   "version" : "2.017002"
+   "version" : "2.018001"
 }
 
