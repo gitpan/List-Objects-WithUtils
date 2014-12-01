@@ -15,6 +15,7 @@ examples/blog-post-list-objects.mkdn
 examples/calc.pl
 examples/cheap_accessors.pl
 examples/lotto.pl
+examples/moo_attributes.pl
 examples/pairs_to_objs.pl
 examples/typed_autovivification.pl
 lib/List/Objects/WithUtils.pm

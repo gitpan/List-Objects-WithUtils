@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.019001';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.020001';
 use strictures 1;
 
 use Carp            ();
@@ -227,12 +227,12 @@ sub clear  { @{ $_[0] } = (); $_[0] }
 sub delete { scalar CORE::splice @{ $_[0] }, $_[1], 1 }
 
 sub delete_when {
-  my ($self, $sub) = @_;
+  my ($self, $cb) = @_;
   my @removed;
   my $i = @$self;
   while ($i--) {
     local *_ = \$self->[$i];
-    CORE::push @removed, CORE::splice @$self, $i, 1 if $sub->($_);
+    CORE::push @removed, CORE::splice @$self, $i, 1 if $cb->($_);
   }
   blessed_or_pkg($_[0])->new(@removed)
 }
@@ -281,10 +281,10 @@ sub map {
 }
 
 sub mapval {
-  my ($self, $sub) = @_;
+  my ($self, $cb) = @_;
   my @copy = @$self;
   blessed_or_pkg($self)->new(
-    CORE::map {; $sub->($_); $_ } @copy
+    CORE::map {; $cb->($_); $_ } @copy
   )
 }
 
@@ -1294,7 +1294,14 @@ list. C<$a> is the accumulated value; C<$b> is the current element. See
 L<List::Util/"reduce">.
 
 Prior to v2.18.1, C<$_[0]> and C<$_[1]> must be used in place of C<$a> and
-C<$b>, respectively.
+C<$b>, respectively. Using positional arguments may make for cleaner syntax in
+some cases:
+
+  my $divide = sub {
+    my ($acc, $next) = @_;
+    $acc / $next
+  };
+  my $q = $array->reduce($divide);
 
 An empty list reduces to C<undef>.
 

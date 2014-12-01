@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Hash;
-$List::Objects::WithUtils::Role::Hash::VERSION = '2.019001';
+$List::Objects::WithUtils::Role::Hash::VERSION = '2.020001';
 use strictures 1;
 
 use Module::Runtime ();
@@ -200,9 +200,14 @@ sub kv_sort {
 }
 
 sub kv_map {
-  my ($self, $sub) = @_;
+  my ($self, $cb) = @_;
+  my $pkg = caller;
+  no strict 'refs';
   blessed_or_pkg($self)->array_type->new(
-    List::Util::pairmap {; $sub->($a, $b) } %$self
+    List::Util::pairmap {; 
+      local (*{"${pkg}::a"}, *{"${pkg}::b"}) = (\$a, \$b);
+      $a->$cb($b)
+    } %$self
   )
 }
 
@@ -526,11 +531,14 @@ each of which is a two-element (unblessed) ARRAY.
 
   # Add 1 to each value, get back an array-type object:
   my $kvs = hash(a => 2, b => 2, c => 3)
-    ->kv_map(sub { ($_[0], $_[1] + 1) });
+    ->kv_map(sub { ($a, $b + 1) });
 
 Like C<map>, but operates on pairs. See L<List::Util/"pairmap">. 
 
 Returns an L</array_type> object containing the results of the map.
+
+In versions prior to v2.20.1, C<$_[0]> and C<$_[1]> must be used in place of
+C<$a> and C<$b>, respectively.
 
 (Available from v2.8.1)
 
@@ -549,9 +557,8 @@ Returns an L</array_type> object containing the results of the map.
 
 Like L</kv>, but sorted by key. A sort routine can be provided.
 
-In versions prior to v2.19.1, C<$_[0]> and
-C<$_[1]> are equivalent to the usual sort variables C<$a> and C<$b>
-respectively.
+In versions prior to v2.19.1, C<$_[0]> and C<$_[1]> must be used in place of
+C<$a> and C<$b>, respectively.
 
 =head3 sliced
 
