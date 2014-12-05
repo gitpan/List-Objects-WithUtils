@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Role::Array;
-$List::Objects::WithUtils::Role::Array::VERSION = '2.020001';
+$List::Objects::WithUtils::Role::Array::VERSION = '2.021001';
 use strictures 1;
 
 use Carp            ();
@@ -520,7 +520,6 @@ sub tuples {
 
 =cut
 
-# TODO consider accepting identity vals for reduce/foldr?
 sub reduce {
   my $pkg = caller;
   no strict 'refs';

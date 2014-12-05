@@ -145,6 +145,7 @@ my @files = (
     't/02_hash/iter.t',
     't/02_hash/keys.t',
     't/02_hash/kv.t',
+    't/02_hash/kv_grep.t',
     't/02_hash/kv_map.t',
     't/02_hash/kv_sort.t',
     't/02_hash/maybe_set.t',

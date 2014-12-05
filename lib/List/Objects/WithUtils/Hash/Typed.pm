@@ -1,5 +1,5 @@
 package List::Objects::WithUtils::Hash::Typed;
-$List::Objects::WithUtils::Hash::Typed::VERSION = '2.020001';
+$List::Objects::WithUtils::Hash::Typed::VERSION = '2.021001';
 use strictures 1;
 
 require Role::Tiny;
